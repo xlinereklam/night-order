@@ -1,766 +1,1434 @@
 <!DOCTYPE html>
+
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
-  <title>Night Order</title>
+<title>Night Order</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+<style>
 
-    body {
-      margin: 0;
-      background: #0b0b0b;
-      color: #fff;
-      font-family: Arial, sans-serif;
-    }
+* {
+  box-sizing: border-box;
+}
 
-    button {
-      font-family: inherit;
-    }
+html {
+  scroll-behavior: smooth;
+}
 
-    .app {
-      width: 100%;
-      max-width: 600px;
-      margin: 0 auto;
-      min-height: 100vh;
-      padding-bottom: 110px;
-    }
+body {
+  margin: 0;
+  background:
+    radial-gradient(circle at 50% -10%, #242424 0%, #0b0b0b 45%);
+  color: #fff;
+  font-family: Arial, Helvetica, sans-serif;
+  min-height: 100vh;
+}
 
-    /* HEADER */
+button,
+textarea {
+  font-family: inherit;
+}
 
-    .header {
-      position: sticky;
-      top: 0;
-      z-index: 20;
-      background: rgba(11,11,11,0.96);
-      border-bottom: 1px solid #252525;
-      padding: 18px 16px;
-      backdrop-filter: blur(10px);
-    }
+button {
+  -webkit-tap-highlight-color: transparent;
+}
 
-    .brand {
-      font-size: 20px;
-      font-weight: bold;
-      letter-spacing: 3px;
-    }
+.app {
+  width: 100%;
+  max-width: 650px;
+  margin: 0 auto;
+  min-height: 100vh;
+  padding-bottom: 125px;
+}
 
-    .table-info {
-      margin-top: 7px;
-      color: #aaa;
-      font-size: 13px;
-    }
 
-    /* CATEGORIES */
+/* =====================================================
+   HEADER
+===================================================== */
 
-    .categories {
-      display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      padding: 14px 16px;
-      scrollbar-width: none;
-      position: sticky;
-      top: 72px;
-      z-index: 10;
-      background: #0b0b0b;
-    }
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 30;
 
-    .categories::-webkit-scrollbar {
-      display: none;
-    }
+  padding:
+    calc(17px + env(safe-area-inset-top))
+    18px
+    16px;
 
-    .category-btn {
-      flex: 0 0 auto;
-      border: 1px solid #333;
-      background: #171717;
-      color: #bbb;
-      padding: 10px 15px;
-      border-radius: 25px;
-      cursor: pointer;
-      font-size: 13px;
-    }
+  background: rgba(10,10,10,.94);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
 
-    .category-btn.active {
-      background: #fff;
-      color: #000;
-      border-color: #fff;
-      font-weight: bold;
-    }
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
 
-    /* PRODUCTS */
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 
-    .products {
-      padding: 5px 16px;
-    }
+.brand {
+  font-size: 20px;
+  font-weight: 900;
+  letter-spacing: 4px;
+}
 
-    .category-title {
-      font-size: 21px;
-      font-weight: bold;
-      margin: 18px 0 14px;
-    }
+.brand-sub {
+  margin-top: 5px;
+  font-size: 10px;
+  color: #777;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
 
-    .product {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      background: #151515;
-      border: 1px solid #242424;
-      border-radius: 15px;
-      padding: 15px;
-      margin-bottom: 10px;
-    }
+.table-badge {
+  display: flex;
+  align-items: center;
+  gap: 7px;
 
-    .product-info {
-      min-width: 0;
-      flex: 1;
-    }
+  padding: 9px 12px;
 
-    .product-name {
-      font-size: 15px;
-      font-weight: bold;
-      margin-bottom: 7px;
-    }
+  border-radius: 20px;
 
-    .product-price {
-      color: #aaa;
-      font-size: 14px;
-    }
+  background: #171717;
+  border: 1px solid #303030;
 
-    .quantity {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+  font-size: 12px;
+  font-weight: bold;
+}
 
-    .quantity button {
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      border: 1px solid #444;
-      background: #222;
-      color: #fff;
-      font-size: 20px;
-      cursor: pointer;
-    }
+.table-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #6cff9c;
+}
 
-    .quantity span {
-      min-width: 20px;
-      text-align: center;
-      font-weight: bold;
-    }
 
-    /* CART */
+/* =====================================================
+   QUICK ACTIONS
+===================================================== */
 
-    .cart-bar {
-      position: fixed;
-      left: 50%;
-      bottom: 15px;
-      transform: translateX(-50%);
-      width: calc(100% - 30px);
-      max-width: 570px;
-      z-index: 50;
-    }
+.quick-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
 
-    .cart-button {
-      width: 100%;
-      border: 0;
-      background: #fff;
-      color: #000;
-      border-radius: 15px;
-      padding: 17px;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-      box-shadow: 0 10px 35px rgba(0,0,0,0.5);
-    }
+  gap: 9px;
 
-    /* MODAL */
+  padding: 13px 16px 3px;
+}
 
-    .overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.78);
-      z-index: 100;
-      display: none;
-      align-items: flex-end;
-      justify-content: center;
-    }
+.quick-button {
+  border: 1px solid #292929;
 
-    .overlay.show {
-      display: flex;
-    }
+  background: #151515;
+  color: #ddd;
 
-    .modal {
-      width: 100%;
-      max-width: 600px;
-      max-height: 90vh;
-      overflow-y: auto;
-      background: #151515;
-      border-radius: 22px 22px 0 0;
-      padding: 22px 18px 30px;
-    }
+  border-radius: 13px;
 
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
+  padding: 12px 10px;
 
-    .modal-title {
-      font-size: 22px;
-      font-weight: bold;
-    }
+  font-size: 12px;
+  font-weight: bold;
 
-    .close {
-      width: 35px;
-      height: 35px;
-      border-radius: 50%;
-      border: 1px solid #444;
-      background: #222;
-      color: #fff;
-      font-size: 20px;
-      cursor: pointer;
-    }
+  cursor: pointer;
+}
 
-    .cart-item {
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      border-bottom: 1px solid #292929;
-      padding: 13px 0;
-    }
+.quick-button:active {
+  transform: scale(.98);
+  background: #202020;
+}
 
-    .cart-item-name {
-      font-size: 14px;
-    }
+.quick-icon {
+  font-size: 16px;
+  margin-right: 5px;
+}
 
-    .cart-item-price {
-      color: #aaa;
-      font-size: 13px;
-      margin-top: 5px;
-    }
 
-    .total {
-      display: flex;
-      justify-content: space-between;
-      font-size: 20px;
-      font-weight: bold;
-      padding: 20px 0;
-    }
+/* =====================================================
+   CATEGORIES
+===================================================== */
 
-    .section-label {
-      color: #aaa;
-      font-size: 13px;
-      margin: 10px 0 9px;
-    }
+.categories {
+  position: sticky;
+  top: 74px;
+  z-index: 20;
 
-    .payment-options {
-      display: flex;
-      gap: 10px;
-    }
+  display: flex;
+  gap: 8px;
 
-    .payment-option {
-      flex: 1;
-      padding: 14px;
-      border-radius: 12px;
-      border: 1px solid #333;
-      background: #202020;
-      color: #aaa;
-      cursor: pointer;
-      font-weight: bold;
-    }
+  overflow-x: auto;
 
-    .payment-option.active {
-      background: #fff;
-      color: #000;
-      border-color: #fff;
-    }
+  padding: 13px 16px;
 
-    textarea {
-      width: 100%;
-      min-height: 85px;
-      resize: vertical;
-      border-radius: 12px;
-      border: 1px solid #333;
-      background: #202020;
-      color: #fff;
-      padding: 12px;
-      font-size: 14px;
-      outline: none;
-    }
+  background: rgba(11,11,11,.94);
 
-    .order-button {
-      width: 100%;
-      margin-top: 15px;
-      padding: 17px;
-      border: 0;
-      border-radius: 13px;
-      background: #fff;
-      color: #000;
-      font-weight: bold;
-      font-size: 16px;
-      cursor: pointer;
-    }
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
 
-    .order-button:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
+  scrollbar-width: none;
+}
 
-    /* STATUS */
+.categories::-webkit-scrollbar {
+  display: none;
+}
 
-    .message {
-      padding: 50px 20px;
-      text-align: center;
-      color: #aaa;
-      line-height: 1.7;
-    }
+.category-btn {
+  flex: 0 0 auto;
 
-    .success {
-      color: #6cff9c;
-    }
+  border: 1px solid #303030;
 
-    .error {
-      color: #ff7070;
-    }
+  background: #151515;
+  color: #aaa;
 
-    .empty {
-      color: #777;
-      text-align: center;
-      padding: 40px 10px;
-    }
-  </style>
+  padding: 10px 15px;
+
+  border-radius: 24px;
+
+  cursor: pointer;
+
+  font-size: 12px;
+  font-weight: bold;
+
+  transition: .15s ease;
+}
+
+.category-btn.active {
+  background: #fff;
+  color: #000;
+  border-color: #fff;
+}
+
+
+/* =====================================================
+   PRODUCTS
+===================================================== */
+
+.products {
+  padding: 3px 16px;
+}
+
+.category-title {
+  margin: 18px 2px 13px;
+
+  font-size: 23px;
+  font-weight: 900;
+  letter-spacing: -.5px;
+}
+
+.category-count {
+  color: #777;
+  font-size: 11px;
+  font-weight: normal;
+  margin-left: 6px;
+}
+
+
+/* =====================================================
+   PRODUCT CARD
+===================================================== */
+
+.product {
+  display: flex;
+  align-items: center;
+
+  gap: 13px;
+
+  min-height: 106px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #191919,
+      #121212
+    );
+
+  border: 1px solid #292929;
+
+  border-radius: 17px;
+
+  padding: 10px;
+
+  margin-bottom: 11px;
+
+  overflow: hidden;
+
+  transition: transform .12s ease,
+              border-color .12s ease;
+}
+
+.product:active {
+  transform: scale(.992);
+}
+
+
+/* PRODUCT IMAGE */
+
+.product-image-wrap {
+  width: 88px;
+  height: 88px;
+
+  flex: 0 0 88px;
+
+  border-radius: 13px;
+
+  overflow: hidden;
+
+  background:
+    radial-gradient(
+      circle at 50% 30%,
+      #333,
+      #171717 70%
+    );
+
+  border: 1px solid #303030;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.product-image {
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+
+  display: block;
+}
+
+.image-placeholder {
+  font-size: 27px;
+  opacity: .4;
+}
+
+
+/* PRODUCT INFO */
+
+.product-info {
+  min-width: 0;
+  flex: 1;
+}
+
+.product-name {
+  font-size: 14px;
+  line-height: 1.25;
+
+  font-weight: 800;
+
+  margin-bottom: 8px;
+
+  word-break: break-word;
+}
+
+.product-description {
+  color: #777;
+
+  font-size: 11px;
+
+  line-height: 1.35;
+
+  margin-bottom: 8px;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+
+  overflow: hidden;
+}
+
+.product-price {
+  color: #fff;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+
+/* =====================================================
+   QUANTITY
+===================================================== */
+
+.quantity {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  flex: 0 0 auto;
+}
+
+.quantity button {
+  width: 34px;
+  height: 34px;
+
+  border-radius: 50%;
+
+  border: 1px solid #3a3a3a;
+
+  background: #222;
+
+  color: #fff;
+
+  font-size: 19px;
+  line-height: 1;
+
+  cursor: pointer;
+}
+
+.quantity button:active {
+  background: #fff;
+  color: #000;
+}
+
+.quantity span {
+  min-width: 17px;
+
+  text-align: center;
+
+  font-size: 13px;
+  font-weight: 900;
+}
+
+
+/* =====================================================
+   CART BAR
+===================================================== */
+
+.cart-bar {
+  position: fixed;
+
+  left: 50%;
+  bottom: calc(13px + env(safe-area-inset-bottom));
+
+  transform: translateX(-50%);
+
+  width: calc(100% - 28px);
+  max-width: 620px;
+
+  z-index: 60;
+}
+
+.cart-button {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  border: 0;
+
+  background: #fff;
+  color: #000;
+
+  border-radius: 17px;
+
+  padding: 16px 18px;
+
+  font-size: 15px;
+  font-weight: 900;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 12px 35px rgba(0,0,0,.55);
+}
+
+.cart-left {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.cart-count {
+  min-width: 23px;
+  height: 23px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #000;
+  color: #fff;
+
+  font-size: 11px;
+}
+
+.cart-total {
+  font-size: 14px;
+}
+
+
+/* =====================================================
+   OVERLAY
+===================================================== */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+
+  background: rgba(0,0,0,.78);
+
+  z-index: 100;
+
+  display: none;
+
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.overlay.show {
+  display: flex;
+}
+
+
+/* =====================================================
+   MODAL
+===================================================== */
+
+.modal {
+  width: 100%;
+  max-width: 650px;
+
+  max-height: 92vh;
+
+  overflow-y: auto;
+
+  background:
+    linear-gradient(
+      180deg,
+      #1a1a1a,
+      #111
+    );
+
+  border-radius: 23px 23px 0 0;
+
+  padding:
+    15px
+    18px
+    calc(30px + env(safe-area-inset-bottom));
+
+  border-top: 1px solid #333;
+}
+
+.modal-handle {
+  width: 38px;
+  height: 4px;
+
+  margin: 0 auto 18px;
+
+  border-radius: 10px;
+
+  background: #444;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 16px;
+}
+
+.modal-title {
+  font-size: 21px;
+  font-weight: 900;
+}
+
+.close {
+  width: 35px;
+  height: 35px;
+
+  border-radius: 50%;
+
+  border: 1px solid #3b3b3b;
+
+  background: #222;
+  color: #fff;
+
+  font-size: 20px;
+
+  cursor: pointer;
+}
+
+
+/* =====================================================
+   CART ITEMS
+===================================================== */
+
+.cart-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 12px;
+
+  padding: 13px 0;
+
+  border-bottom: 1px solid #292929;
+}
+
+.cart-item-left {
+  min-width: 0;
+  flex: 1;
+}
+
+.cart-item-name {
+  font-size: 13px;
+  font-weight: bold;
+  line-height: 1.35;
+}
+
+.cart-item-price {
+  color: #777;
+  font-size: 11px;
+  margin-top: 5px;
+}
+
+.cart-item-controls {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.cart-item-controls button {
+  width: 29px;
+  height: 29px;
+
+  border-radius: 50%;
+
+  border: 1px solid #3b3b3b;
+
+  background: #222;
+  color: #fff;
+
+  cursor: pointer;
+}
+
+.cart-item-qty {
+  min-width: 18px;
+  text-align: center;
+
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.cart-item-total {
+  min-width: 72px;
+  text-align: right;
+
+  font-size: 12px;
+  font-weight: bold;
+}
+
+
+/* =====================================================
+   TOTAL
+===================================================== */
+
+.total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 19px 0;
+
+  font-size: 20px;
+  font-weight: 900;
+}
+
+.total span:last-child {
+  font-size: 21px;
+}
+
+
+/* =====================================================
+   FORM
+===================================================== */
+
+.section-label {
+  color: #888;
+
+  font-size: 11px;
+  font-weight: bold;
+
+  margin: 13px 0 8px;
+
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.payment-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
+}
+
+.payment-option {
+  padding: 14px;
+
+  border-radius: 12px;
+
+  border: 1px solid #333;
+
+  background: #202020;
+  color: #aaa;
+
+  cursor: pointer;
+
+  font-weight: bold;
+}
+
+.payment-option.active {
+  background: #fff;
+  color: #000;
+  border-color: #fff;
+}
+
+textarea {
+  width: 100%;
+
+  min-height: 82px;
+
+  resize: vertical;
+
+  border-radius: 13px;
+
+  border: 1px solid #333;
+
+  background: #202020;
+
+  color: #fff;
+
+  padding: 12px;
+
+  font-size: 13px;
+
+  outline: none;
+}
+
+textarea:focus {
+  border-color: #777;
+}
+
+
+/* =====================================================
+   ORDER BUTTON
+===================================================== */
+
+.order-button {
+  width: 100%;
+
+  margin-top: 15px;
+
+  padding: 17px;
+
+  border: 0;
+
+  border-radius: 14px;
+
+  background: #fff;
+  color: #000;
+
+  font-weight: 900;
+
+  font-size: 15px;
+
+  cursor: pointer;
+}
+
+.order-button:disabled {
+  opacity: .5;
+}
+
+
+/* =====================================================
+   MESSAGES
+===================================================== */
+
+.message {
+  padding: 55px 20px;
+
+  text-align: center;
+
+  color: #777;
+
+  line-height: 1.7;
+
+  font-size: 13px;
+}
+
+.success {
+  color: #6cff9c;
+}
+
+.error {
+  color: #ff7070;
+}
+
+.empty {
+  color: #666;
+
+  text-align: center;
+
+  padding: 40px 10px;
+
+  font-size: 13px;
+}
+
+
+/* =====================================================
+   TOAST
+===================================================== */
+
+.toast {
+  position: fixed;
+
+  left: 50%;
+  bottom: 90px;
+
+  transform:
+    translate(-50%, 20px);
+
+  z-index: 200;
+
+  width: calc(100% - 40px);
+  max-width: 450px;
+
+  padding: 14px 16px;
+
+  border-radius: 13px;
+
+  background: #202020;
+
+  border: 1px solid #3a3a3a;
+
+  color: #fff;
+
+  text-align: center;
+
+  font-size: 13px;
+  font-weight: bold;
+
+  opacity: 0;
+
+  pointer-events: none;
+
+  transition: .25s ease;
+}
+
+.toast.show {
+  opacity: 1;
+
+  transform:
+    translate(-50%, 0);
+}
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (max-width: 380px) {
+
+  .product-image-wrap {
+    width: 74px;
+    height: 74px;
+    flex-basis: 74px;
+  }
+
+  .product {
+    gap: 9px;
+    padding: 8px;
+  }
+
+  .product-name {
+    font-size: 13px;
+  }
+
+  .quantity {
+    gap: 4px;
+  }
+
+  .quantity button {
+    width: 31px;
+    height: 31px;
+  }
+
+}
+
+</style>
+
 </head>
-
 
 <body>
 
 <div class="app">
 
-  <header class="header">
+<!-- ===================================================
+     HEADER
+=================================================== -->
 
-    <div class="brand">
-      NIGHT ORDER
-    </div>
+<header class="header">
 
-    <div class="table-info" id="tableInfo">
-      Masa bilgisi yükleniyor...
-    </div>
+  <div class="header-top">
 
-  </header>
+```
+<div>
 
+  <div class="brand">
+    NIGHT ORDER
+  </div>
 
-  <div class="categories" id="categories"></div>
-
-
-  <main class="products" id="products">
-
-    <div class="message">
-      Menü yükleniyor...
-    </div>
-
-  </main>
+  <div class="brand-sub">
+    TABLE SERVICE
+  </div>
 
 </div>
 
 
+<div class="table-badge">
+
+  <span class="table-dot"></span>
+
+  <span id="tableInfo">
+    Masa...
+  </span>
+
+</div>
+```
+
+  </div>
+
+</header>
+
+<!-- ===================================================
+     QUICK ACTIONS
+=================================================== -->
+
+<div class="quick-actions">
+
+<button
+ class="quick-button"
+ onclick="callWaiter()">
+
+```
+<span class="quick-icon">🛎</span>
+Garson Çağır
+```
+
+  </button>
+
+<button
+ class="quick-button"
+ onclick="requestBill()">
+
+```
+<span class="quick-icon">💳</span>
+Hesap İste
+```
+
+  </button>
+
+</div>
+
+<!-- ===================================================
+     CATEGORIES
+=================================================== -->
+
+<div
+  class="categories"
+  id="categories">
+</div>
+
+<!-- ===================================================
+     PRODUCTS
+=================================================== -->
+
+<main
+  class="products"
+  id="products">
+
+  <div class="message">
+    Menü yükleniyor...
+  </div>
+
+</main>
+
+</div>
+
+<!-- ===================================================
+     CART BAR
+=================================================== -->
+
 <div class="cart-bar">
 
-  <button class="cart-button" onclick="openCart()">
+<button
+ class="cart-button"
+ onclick="openCart()">
 
+```
+<div class="cart-left">
+
+  <span>
     SEPET
-    <span id="cartCount">0</span>
+  </span>
+
+  <span
+    class="cart-count"
+    id="cartCount">
+    0
+  </span>
+
+</div>
+
+
+<span
+  class="cart-total"
+  id="cartBarTotal">
+  0,00 TL
+</span>
+```
+
+  </button>
+
+</div>
+
+<!-- ===================================================
+     CART MODAL
+=================================================== -->
+
+<div
+  class="overlay"
+  id="cartOverlay"
+  onclick="overlayClose(event)">
+
+  <div class="modal">
+
+```
+<div class="modal-handle"></div>
+
+
+<div class="modal-header">
+
+  <div class="modal-title">
+    Siparişiniz
+  </div>
+
+
+  <button
+    class="close"
+    onclick="closeCart()">
+
+    ×
 
   </button>
 
 </div>
 
 
-<!-- SEPET MODAL -->
-
-<div class="overlay" id="cartOverlay">
-
-  <div class="modal">
-
-    <div class="modal-header">
-
-      <div class="modal-title">
-        Siparişiniz
-      </div>
-
-      <button
-        class="close"
-        onclick="closeCart()">
-        ×
-      </button>
-
-    </div>
+<div id="cartItems"></div>
 
 
-    <div id="cartItems"></div>
+<div class="total">
+
+  <span>
+    Toplam
+  </span>
+
+  <span id="cartTotal">
+    0,00 TL
+  </span>
+
+</div>
 
 
-    <div class="total">
-
-      <span>
-        Toplam
-      </span>
-
-      <span id="cartTotal">
-        0,00 TL
-      </span>
-
-    </div>
+<div class="section-label">
+  Ödeme tercihi
+</div>
 
 
-    <div class="section-label">
-      Ödeme tercihi
-    </div>
+<div class="payment-options">
+
+  <button
+    id="cashButton"
+    class="payment-option active"
+    onclick="selectPayment('cash')">
+
+    Nakit
+
+  </button>
 
 
-    <div class="payment-options">
+  <button
+    id="posButton"
+    class="payment-option"
+    onclick="selectPayment('pos')">
 
-      <button
-        id="cashButton"
-        class="payment-option active"
-        onclick="selectPayment('cash')">
+    POS Cihazı
 
-        Nakit
+  </button>
 
-      </button>
-
-
-      <button
-        id="posButton"
-        class="payment-option"
-        onclick="selectPayment('pos')">
-
-        POS Cihazı
-
-      </button>
-
-    </div>
+</div>
 
 
-    <div class="section-label">
-      Özel not
-    </div>
+<div class="section-label">
+  Sipariş notu
+</div>
 
 
-    <textarea
-      id="orderNote"
-      maxlength="300"
-      placeholder="Varsa siparişinizle ilgili özel bir not...">
-    </textarea>
+<textarea
+  id="orderNote"
+  maxlength="300"
+  placeholder="Varsa siparişinizle ilgili özel bir not..."></textarea>
 
 
-    <button
-      id="orderButton"
-      class="order-button"
-      onclick="submitOrder()">
+<button
+  id="orderButton"
+  class="order-button"
+  onclick="submitOrder()">
 
-      SİPARİŞ VER
+  SİPARİŞ VER
 
-    </button>
+</button>
 
 
-    <div
-      id="orderMessage"
-      style="text-align:center;margin-top:15px;font-size:14px;">
-    </div>
+<div
+  id="orderMessage"
+  style="
+    text-align:center;
+    margin-top:14px;
+    font-size:13px;
+  ">
+</div>
+```
 
   </div>
 
 </div>
 
+<!-- ===================================================
+     TOAST
+=================================================== -->
+
+<div
+  class="toast"
+  id="toast">
+</div>
 
 <script>
 
-  /* =========================================
-     SUPABASE
-  ========================================= */
+/* =====================================================
+   SUPABASE
+===================================================== */
 
-  const SUPABASE_URL =
-    "https://qkevbwcwsbgftvgxgasy.supabase.co";
+const SUPABASE_URL =
+  "https://qkevbwcwsbgftvgxgasy.supabase.co";
 
-  const SUPABASE_ANON_KEY =
-    "sb_publishable_l39-lwrk--GgVkKDFEoPIA_1pmKKPTu";
-
-
-  /* =========================================
-     MASA TOKEN
-  ========================================= */
-
-  const params =
-    new URLSearchParams(window.location.search);
-
-  const token =
-    params.get("t");
+const SUPABASE_ANON_KEY =
+  "sb_publishable_l39-lwrk--GgVkKDFEoPIA_1pmKKPTu";
 
 
-  /* =========================================
-     UYGULAMA DEĞİŞKENLERİ
-  ========================================= */
+/* =====================================================
+   MASA TOKEN
+===================================================== */
 
-  let table = null;
+const params =
+  new URLSearchParams(
+    window.location.search
+  );
 
-  let categories = [];
-
-  let products = [];
-
-  let activeCategory = null;
-
-  let cart = {};
-
-  let paymentMethod = "cash";
-
-  let orderLocked = false;
+const token =
+  params.get("t");
 
 
-  /* =========================================
-     FORMAT
-  ========================================= */
+/* =====================================================
+   APP STATE
+===================================================== */
 
-  function formatPrice(price) {
+let table = null;
 
-    return Number(price).toLocaleString(
-      "tr-TR",
-      {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-      }
-    ) + " TL";
+let categories = [];
+
+let products = [];
+
+let activeCategory = null;
+
+let cart = {};
+
+let paymentMethod = "cash";
+
+let orderLocked = false;
+
+
+/* =====================================================
+   PRICE
+===================================================== */
+
+function formatPrice(price) {
+
+  return Number(price).toLocaleString(
+    "tr-TR",
+    {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }
+  ) + " TL";
+
+}
+
+
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
+
+function escapeHtml(value) {
+
+  return String(value)
+
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+
+}
+
+
+/* =====================================================
+   LOAD TABLE
+===================================================== */
+
+async function loadTable() {
+
+  if (!token) {
+
+    document.getElementById("tableInfo")
+      .innerHTML =
+      `<span class="error">
+        Masa bulunamadı
+      </span>`;
+
+    return false;
 
   }
 
 
-  /* =========================================
-     MASA
-  ========================================= */
+  try {
 
-  async function loadTable() {
-
-    if (!token) {
-
-      document.getElementById("tableInfo")
-        .innerHTML =
-        `<span class="error">
-          Masa bilgisi bulunamadı.
-        </span>`;
-
-      return false;
-    }
+    const url =
+      `${SUPABASE_URL}/rest/v1/tables` +
+      `?token=eq.${encodeURIComponent(token)}` +
+      `&active=eq.true` +
+      `&select=id,table_number,token`;
 
 
-    try {
-
-      const url =
-        `${SUPABASE_URL}/rest/v1/tables` +
-        `?token=eq.${encodeURIComponent(token)}` +
-        `&active=eq.true` +
-        `&select=id,table_number,token`;
-
-
-      const response =
-        await fetch(url, {
-
+    const response =
+      await fetch(
+        url,
+        {
           headers: {
-
-            "apikey": SUPABASE_ANON_KEY,
+            "apikey":
+              SUPABASE_ANON_KEY,
 
             "Authorization":
               `Bearer ${SUPABASE_ANON_KEY}`
-
           }
-
-        });
-
-
-      if (!response.ok) {
-
-        throw new Error(
-          "Masa bağlantısı başarısız."
-        );
-
-      }
-
-
-      const data =
-        await response.json();
-
-
-      if (!data.length) {
-
-        throw new Error(
-          "Geçersiz veya pasif masa."
-        );
-
-      }
-
-
-      table = data[0];
-
-
-      document.getElementById("tableInfo")
-        .innerHTML =
-        `MASA ${table.table_number}`;
-
-
-      return true;
-
-    }
-
-    catch (error) {
-
-      document.getElementById("tableInfo")
-        .innerHTML =
-        `<span class="error">
-          ${error.message}
-        </span>`;
-
-      return false;
-
-    }
-
-  }
-
-
-  /* =========================================
-     KATEGORİLER
-  ========================================= */
-
-  async function loadCategories() {
-
-    const url =
-      `${SUPABASE_URL}/rest/v1/categories` +
-      `?active=eq.true` +
-      `&select=id,name,sort_order` +
-      `&order=sort_order.asc`;
-
-
-    const response =
-      await fetch(url, {
-
-        headers: {
-
-          "apikey": SUPABASE_ANON_KEY,
-
-          "Authorization":
-            `Bearer ${SUPABASE_ANON_KEY}`
-
         }
-
-      });
+      );
 
 
     if (!response.ok) {
 
       throw new Error(
-        "Kategoriler yüklenemedi."
+        "Masa bağlantısı başarısız."
       );
 
     }
 
 
-    categories =
+    const data =
       await response.json();
 
 
-    renderCategories();
+    if (!data.length) {
 
-
-    if (categories.length) {
-
-      activeCategory =
-        categories[0].id;
+      throw new Error(
+        "Geçersiz veya pasif masa."
+      );
 
     }
 
+
+    table = data[0];
+
+
+    document.getElementById("tableInfo")
+      .textContent =
+      `MASA ${table.table_number}`;
+
+
+    return true;
+
   }
 
+  catch (error) {
 
-  /* =========================================
-     ÜRÜNLER
-  ========================================= */
+    document.getElementById("tableInfo")
+      .innerHTML =
+      `<span class="error">
+        ${escapeHtml(error.message)}
+      </span>`;
 
-  async function loadProducts() {
+    return false;
 
-    const url =
-      `${SUPABASE_URL}/rest/v1/products` +
-      `?active=eq.true` +
-      `&select=id,category_id,name,description,price,image_url,sort_order` +
-      `&order=sort_order.asc`;
+  }
+
+}
 
 
-    const response =
-      await fetch(url, {
+/* =====================================================
+   LOAD CATEGORIES
+===================================================== */
 
+async function loadCategories() {
+
+  const url =
+    `${SUPABASE_URL}/rest/v1/categories` +
+    `?active=eq.true` +
+    `&select=id,name,sort_order` +
+    `&order=sort_order.asc`;
+
+
+  const response =
+    await fetch(
+      url,
+      {
         headers: {
-
-          "apikey": SUPABASE_ANON_KEY,
+          "apikey":
+            SUPABASE_ANON_KEY,
 
           "Authorization":
             `Bearer ${SUPABASE_ANON_KEY}`
-
         }
-
-      });
-
-
-    if (!response.ok) {
-
-      throw new Error(
-        "Ürünler yüklenemedi."
-      );
-
-    }
+      }
+    );
 
 
-    products =
-      await response.json();
+  if (!response.ok) {
 
-
-    renderProducts();
+    throw new Error(
+      "Kategoriler yüklenemedi."
+    );
 
   }
 
 
-  /* =========================================
-     KATEGORİ EKRANI
-  ========================================= */
-
-  function renderCategories() {
-
-    const container =
-      document.getElementById("categories");
+  categories =
+    await response.json();
 
 
-    container.innerHTML = "";
+  if (categories.length) {
+
+    activeCategory =
+      categories[0].id;
+
+  }
 
 
-    categories.forEach(category => {
+  renderCategories();
 
-      const button =
-        document.createElement("button");
+}
 
 
-      button.className =
-        "category-btn" +
-        (category.id === activeCategory
+/* =====================================================
+   LOAD PRODUCTS
+===================================================== */
+
+async function loadProducts() {
+
+  const url =
+    `${SUPABASE_URL}/rest/v1/products` +
+    `?active=eq.true` +
+    `&select=id,category_id,name,description,price,image_url,sort_order` +
+    `&order=sort_order.asc`;
+
+
+  const response =
+    await fetch(
+      url,
+      {
+        headers: {
+          "apikey":
+            SUPABASE_ANON_KEY,
+
+          "Authorization":
+            `Bearer ${SUPABASE_ANON_KEY}`
+        }
+      }
+    );
+
+
+  if (!response.ok) {
+
+    throw new Error(
+      "Ürünler yüklenemedi."
+    );
+
+  }
+
+
+  products =
+    await response.json();
+
+
+  renderProducts();
+
+  updateCartCount();
+
+}
+
+
+/* =====================================================
+   RENDER CATEGORIES
+===================================================== */
+
+function renderCategories() {
+
+  const container =
+    document.getElementById(
+      "categories"
+    );
+
+
+  container.innerHTML = "";
+
+
+  categories.forEach(category => {
+
+    const button =
+      document.createElement("button");
+
+
+    button.className =
+      "category-btn" +
+      (
+        category.id === activeCategory
           ? " active"
-          : "");
+          : ""
+      );
 
 
-      button.textContent =
-        category.name;
+    button.textContent =
+      category.name;
 
 
-      button.onclick = function() {
+    button.onclick =
+      function() {
 
         activeCategory =
           category.id;
@@ -769,390 +1437,578 @@
 
         renderProducts();
 
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth"
+        });
+
       };
 
 
-      container.appendChild(button);
+    container.appendChild(button);
 
-    });
+  });
+
+}
+
+
+/* =====================================================
+   RENDER PRODUCTS
+===================================================== */
+
+function renderProducts() {
+
+  const container =
+    document.getElementById(
+      "products"
+    );
+
+
+  const filtered =
+    products
+      .filter(
+        product =>
+          product.category_id ===
+          activeCategory
+      )
+      .sort(
+        (a,b) =>
+          Number(a.sort_order || 0) -
+          Number(b.sort_order || 0)
+      );
+
+
+  if (!filtered.length) {
+
+    container.innerHTML =
+      `<div class="empty">
+        Bu kategoride ürün bulunmuyor.
+      </div>`;
+
+    return;
 
   }
 
 
-  /* =========================================
-     ÜRÜNLERİ GÖSTER
-  ========================================= */
-
-  function renderProducts() {
-
-    const container =
-      document.getElementById("products");
+  const category =
+    categories.find(
+      c =>
+        c.id === activeCategory
+    );
 
 
-    const filtered =
-      products.filter(
-        product =>
-          product.category_id === activeCategory
+  let html = `
+
+    <div class="category-title">
+
+      ${escapeHtml(
+        category
+          ? category.name
+          : ""
+      )}
+
+      <span class="category-count">
+        ${filtered.length} ürün
+      </span>
+
+    </div>
+
+  `;
+
+
+  filtered.forEach(product => {
+
+    const quantity =
+      cart[product.id] || 0;
+
+
+    const image =
+      product.image_url
+        ? `
+          <img
+            class="product-image"
+            src="${escapeHtml(product.image_url)}"
+            alt="${escapeHtml(product.name)}"
+            loading="lazy"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+          >
+
+          <span
+            class="image-placeholder"
+            style="display:none;">
+            🍸
+          </span>
+        `
+        : `
+          <span class="image-placeholder">
+            🍸
+          </span>
+        `;
+
+
+    html += `
+
+      <article class="product">
+
+        <div class="product-image-wrap">
+
+          ${image}
+
+        </div>
+
+
+        <div class="product-info">
+
+          <div class="product-name">
+            ${escapeHtml(product.name)}
+          </div>
+
+
+          ${
+            product.description
+              ? `
+                <div class="product-description">
+                  ${escapeHtml(
+                    product.description
+                  )}
+                </div>
+              `
+              : ""
+          }
+
+
+          <div class="product-price">
+            ${formatPrice(product.price)}
+          </div>
+
+        </div>
+
+
+        <div class="quantity">
+
+          <button
+            aria-label="Azalt"
+            onclick="
+              changeQuantity(
+                ${product.id},
+                -1
+              )
+            ">
+            −
+          </button>
+
+
+          <span>
+            ${quantity}
+          </span>
+
+
+          <button
+            aria-label="Artır"
+            onclick="
+              changeQuantity(
+                ${product.id},
+                1
+              )
+            ">
+            +
+          </button>
+
+        </div>
+
+      </article>
+
+    `;
+
+  });
+
+
+  container.innerHTML =
+    html;
+
+}
+
+
+/* =====================================================
+   QUANTITY
+===================================================== */
+
+function changeQuantity(
+  productId,
+  amount
+) {
+
+  const current =
+    cart[productId] || 0;
+
+
+  const next =
+    current + amount;
+
+
+  if (next <= 0) {
+
+    delete cart[productId];
+
+  } else {
+
+    cart[productId] =
+      Math.min(
+        next,
+        99
       );
 
-
-    if (!filtered.length) {
-
-      container.innerHTML =
-        `<div class="empty">
-          Bu kategoride ürün bulunmuyor.
-        </div>`;
-
-      return;
-
-    }
+  }
 
 
-    const category =
-      categories.find(
-        c => c.id === activeCategory
-      );
+  renderProducts();
+
+  updateCartCount();
+
+}
 
 
-    let html =
-      `<div class="category-title">
-        ${category ? category.name : ""}
+/* =====================================================
+   CART COUNT + TOTAL
+===================================================== */
+
+function getCartData() {
+
+  const selected =
+    products.filter(
+      product =>
+        cart[product.id]
+    );
+
+
+  let total = 0;
+
+  let count = 0;
+
+
+  selected.forEach(product => {
+
+    const quantity =
+      cart[product.id];
+
+
+    count += quantity;
+
+    total +=
+      Number(product.price) *
+      quantity;
+
+  });
+
+
+  return {
+    selected,
+    total,
+    count
+  };
+
+}
+
+
+function updateCartCount() {
+
+  const data =
+    getCartData();
+
+
+  document.getElementById(
+    "cartCount"
+  ).textContent =
+    data.count;
+
+
+  document.getElementById(
+    "cartBarTotal"
+  ).textContent =
+    formatPrice(data.total);
+
+}
+
+
+/* =====================================================
+   OPEN CART
+===================================================== */
+
+function openCart() {
+
+  renderCart();
+
+
+  document
+    .getElementById(
+      "cartOverlay"
+    )
+    .classList.add("show");
+
+
+  document.body.style.overflow =
+    "hidden";
+
+}
+
+
+/* =====================================================
+   CLOSE CART
+===================================================== */
+
+function closeCart() {
+
+  document
+    .getElementById(
+      "cartOverlay"
+    )
+    .classList.remove("show");
+
+
+  document.body.style.overflow =
+    "";
+
+}
+
+
+/* =====================================================
+   OVERLAY CLOSE
+===================================================== */
+
+function overlayClose(event) {
+
+  if (
+    event.target.id ===
+    "cartOverlay"
+  ) {
+
+    closeCart();
+
+  }
+
+}
+
+
+/* =====================================================
+   RENDER CART
+===================================================== */
+
+function renderCart() {
+
+  const container =
+    document.getElementById(
+      "cartItems"
+    );
+
+
+  const data =
+    getCartData();
+
+
+  if (!data.selected.length) {
+
+    container.innerHTML =
+      `<div class="empty">
+        Sepetiniz boş.
       </div>`;
 
 
-    filtered.forEach(product => {
+    document.getElementById(
+      "cartTotal"
+    ).textContent =
+      "0,00 TL";
 
-      const quantity =
-        cart[product.id] || 0;
+
+    return;
+
+  }
 
 
-      html += `
+  let html = "";
 
-        <div class="product">
 
-          <div class="product-info">
+  data.selected.forEach(product => {
 
-            <div class="product-name">
-              ${escapeHtml(product.name)}
-            </div>
+    const quantity =
+      cart[product.id];
 
-            <div class="product-price">
-              ${formatPrice(product.price)}
-            </div>
 
+    const itemTotal =
+      Number(product.price) *
+      quantity;
+
+
+    html += `
+
+      <div class="cart-item">
+
+        <div class="cart-item-left">
+
+          <div class="cart-item-name">
+            ${escapeHtml(
+              product.name
+            )}
           </div>
 
-
-          <div class="quantity">
-
-            <button
-              onclick="changeQuantity(${product.id}, -1)">
-              −
-            </button>
-
-
-            <span>
-              ${quantity}
-            </span>
-
-
-            <button
-              onclick="changeQuantity(${product.id}, 1)">
-              +
-            </button>
-
+          <div class="cart-item-price">
+            ${formatPrice(
+              product.price
+            )} / adet
           </div>
 
         </div>
 
-      `;
 
-    });
-
-
-    container.innerHTML = html;
-
-  }
-
-
-  /* =========================================
-     HTML GÜVENLİĞİ
-  ========================================= */
-
-  function escapeHtml(value) {
-
-    return String(value)
-
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
-      .replaceAll('"', "&quot;")
-      .replaceAll("'", "&#039;");
-
-  }
-
-
-  /* =========================================
-     ADET
-  ========================================= */
-
-  function changeQuantity(productId, amount) {
-
-    const current =
-      cart[productId] || 0;
-
-
-    const next =
-      current + amount;
-
-
-    if (next <= 0) {
-
-      delete cart[productId];
-
-    } else {
-
-      cart[productId] =
-        Math.min(next, 99);
-
-    }
-
-
-    renderProducts();
-
-    updateCartCount();
-
-  }
-
-
-  /* =========================================
-     SEPET SAYISI
-  ========================================= */
-
-  function updateCartCount() {
-
-    const count =
-      Object.values(cart)
-        .reduce(
-          (sum, quantity) =>
-            sum + quantity,
-          0
-        );
-
-
-    document.getElementById("cartCount")
-      .textContent = count;
-
-  }
-
-
-  /* =========================================
-     SEPET
-  ========================================= */
-
-  function openCart() {
-
-    renderCart();
-
-    document
-      .getElementById("cartOverlay")
-      .classList.add("show");
-
-  }
-
-
-  function closeCart() {
-
-    document
-      .getElementById("cartOverlay")
-      .classList.remove("show");
-
-  }
-
-
-  /* =========================================
-     SEPETİ RENDER
-  ========================================= */
-
-  function renderCart() {
-
-    const container =
-      document.getElementById("cartItems");
-
-
-    const selectedProducts =
-      products.filter(
-        product => cart[product.id]
-      );
-
-
-    if (!selectedProducts.length) {
-
-      container.innerHTML =
-        `<div class="empty">
-          Sepetiniz boş.
-        </div>`;
-
-      document.getElementById("cartTotal")
-        .textContent =
-        "0,00 TL";
-
-      return;
-
-    }
-
-
-    let total = 0;
-
-    let html = "";
-
-
-    selectedProducts.forEach(product => {
-
-      const quantity =
-        cart[product.id];
-
-
-      const itemTotal =
-        Number(product.price) *
-        quantity;
-
-
-      total += itemTotal;
-
-
-      html += `
-
-        <div class="cart-item">
-
-          <div>
-
-            <div class="cart-item-name">
-              ${escapeHtml(product.name)}
-              × ${quantity}
-            </div>
-
-            <div class="cart-item-price">
-              ${formatPrice(product.price)}
-            </div>
-
-          </div>
-
-
-          <strong>
-            ${formatPrice(itemTotal)}
-          </strong>
+        <div class="cart-item-controls">
+
+          <button
+            onclick="
+              changeQuantity(
+                ${product.id},
+                -1
+              );
+              renderCart();
+            ">
+            −
+          </button>
+
+
+          <span class="cart-item-qty">
+            ${quantity}
+          </span>
+
+
+          <button
+            onclick="
+              changeQuantity(
+                ${product.id},
+                1
+              );
+              renderCart();
+            ">
+            +
+          </button>
 
         </div>
 
-      `;
 
-    });
+        <div class="cart-item-total">
+
+          ${formatPrice(
+            itemTotal
+          )}
+
+        </div>
+
+      </div>
+
+    `;
+
+  });
 
 
-    container.innerHTML = html;
+  container.innerHTML =
+    html;
 
 
-    document.getElementById("cartTotal")
-      .textContent =
-      formatPrice(total);
+  document.getElementById(
+    "cartTotal"
+  ).textContent =
+    formatPrice(data.total);
+
+}
+
+
+/* =====================================================
+   PAYMENT
+===================================================== */
+
+function selectPayment(method) {
+
+  paymentMethod =
+    method;
+
+
+  document
+    .getElementById(
+      "cashButton"
+    )
+    .classList.toggle(
+      "active",
+      method === "cash"
+    );
+
+
+  document
+    .getElementById(
+      "posButton"
+    )
+    .classList.toggle(
+      "active",
+      method === "pos"
+    );
+
+}
+
+
+/* =====================================================
+   SUBMIT ORDER
+===================================================== */
+
+async function submitOrder() {
+
+  if (orderLocked) {
+    return;
+  }
+
+
+  const data =
+    getCartData();
+
+
+  if (!data.selected.length) {
+
+    showOrderMessage(
+      "Sepetiniz boş.",
+      "error"
+    );
+
+    return;
 
   }
 
 
-  /* =========================================
-     ÖDEME
-  ========================================= */
+  if (!table) {
 
-  function selectPayment(method) {
+    showOrderMessage(
+      "Masa bilgisi bulunamadı.",
+      "error"
+    );
 
-    paymentMethod = method;
-
-
-    document
-      .getElementById("cashButton")
-      .classList.toggle(
-        "active",
-        method === "cash"
-      );
-
-
-    document
-      .getElementById("posButton")
-      .classList.toggle(
-        "active",
-        method === "pos"
-      );
+    return;
 
   }
 
 
-  /* =========================================
-     SİPARİŞ
-  ========================================= */
-
-  async function submitOrder() {
-
-    if (orderLocked) {
-      return;
-    }
+  const button =
+    document.getElementById(
+      "orderButton"
+    );
 
 
-    const selectedProducts =
-      products.filter(
-        product => cart[product.id]
-      );
+  orderLocked = true;
+
+  button.disabled = true;
+
+  button.textContent =
+    "SİPARİŞ GÖNDERİLİYOR...";
 
 
-    if (!selectedProducts.length) {
+  try {
 
-      showOrderMessage(
-        "Sepetiniz boş.",
-        "error"
-      );
-
-      return;
-
-    }
-
-
-    if (!table) {
-
-      showOrderMessage(
-        "Masa bilgisi bulunamadı.",
-        "error"
-      );
-
-      return;
-
-    }
-
-
-    const button =
-      document.getElementById("orderButton");
-
-
-    /*
-      ÇİFT TIKLAMA KORUMASI
-
-      Buton 10 saniye kilitlenir.
-    */
-
-    orderLocked = true;
-
-    button.disabled = true;
-
-    button.textContent =
-      "SİPARİŞ GÖNDERİLİYOR...";
-
-
-    try {
-
-      let total = 0;
-
-
-      const items =
-        selectedProducts.map(product => {
+    const items =
+      data.selected.map(
+        product => {
 
           const quantity =
             cart[product.id];
@@ -1161,9 +2017,6 @@
           const itemTotal =
             Number(product.price) *
             quantity;
-
-
-          total += itemTotal;
 
 
           return {
@@ -1178,45 +2031,48 @@
               quantity,
 
             unit_price:
-              Number(product.price),
+              Number(
+                product.price
+              ),
 
             total:
               itemTotal
 
           };
 
-        });
+        }
+      );
 
 
-      /*
-        TEST AŞAMASINDA
-        ÖNCE ORDERS KAYDI OLUŞTURUYORUZ.
-      */
+    /* ---------------------------------------------
+       ORDER
+    --------------------------------------------- */
 
-      const orderResponse =
-        await fetch(
-          `${SUPABASE_URL}/rest/v1/orders`,
-          {
+    const orderResponse =
+      await fetch(
+        `${SUPABASE_URL}/rest/v1/orders`,
+        {
 
-            method: "POST",
+          method: "POST",
 
-            headers: {
+          headers: {
 
-              "apikey":
-                SUPABASE_ANON_KEY,
+            "apikey":
+              SUPABASE_ANON_KEY,
 
-              "Authorization":
-                `Bearer ${SUPABASE_ANON_KEY}`,
+            "Authorization":
+              `Bearer ${SUPABASE_ANON_KEY}`,
 
-              "Content-Type":
-                "application/json",
+            "Content-Type":
+              "application/json",
 
-              "Prefer":
-                "return=representation"
+            "Prefer":
+              "return=representation"
 
-            },
+          },
 
-            body: JSON.stringify({
+          body:
+            JSON.stringify({
 
               table_id:
                 table.id,
@@ -1229,67 +2085,71 @@
 
               note:
                 document
-                  .getElementById("orderNote")
+                  .getElementById(
+                    "orderNote"
+                  )
                   .value
                   .trim(),
 
               total:
-                total
+                data.total
 
             })
 
-          }
-        );
+        }
+      );
 
 
-      if (!orderResponse.ok) {
+    if (!orderResponse.ok) {
 
-        const errorText =
-          await orderResponse.text();
-
-        throw new Error(
-          `Sipariş oluşturulamadı: ${errorText}`
-        );
-
-      }
+      const errorText =
+        await orderResponse.text();
 
 
-      const orderData =
-        await orderResponse.json();
+      throw new Error(
+        `Sipariş oluşturulamadı: ${errorText}`
+      );
+
+    }
 
 
-      const order =
-        orderData[0];
+    const orderData =
+      await orderResponse.json();
 
 
-      /*
-        SİPARİŞ KALEMLERİ
-      */
+    const order =
+      orderData[0];
 
-      const itemResponse =
-        await fetch(
-          `${SUPABASE_URL}/rest/v1/order_items`,
-          {
 
-            method: "POST",
+    /* ---------------------------------------------
+       ORDER ITEMS
+    --------------------------------------------- */
 
-            headers: {
+    const itemResponse =
+      await fetch(
+        `${SUPABASE_URL}/rest/v1/order_items`,
+        {
 
-              "apikey":
-                SUPABASE_ANON_KEY,
+          method: "POST",
 
-              "Authorization":
-                `Bearer ${SUPABASE_ANON_KEY}`,
+          headers: {
 
-              "Content-Type":
-                "application/json"
+            "apikey":
+              SUPABASE_ANON_KEY,
 
-            },
+            "Authorization":
+              `Bearer ${SUPABASE_ANON_KEY`,
 
-            body:
-              JSON.stringify(
+            "Content-Type":
+              "application/json"
 
-                items.map(item => ({
+          },
+
+          body:
+            JSON.stringify(
+
+              items.map(
+                item => ({
 
                   order_id:
                     order.id,
@@ -1309,190 +2169,292 @@
                   total:
                     item.total
 
-                }))
-
+                })
               )
 
-          }
-        );
+            )
 
-
-      if (!itemResponse.ok) {
-
-        const errorText =
-          await itemResponse.text();
-
-        throw new Error(
-          `Sipariş ürünleri kaydedilemedi: ${errorText}`
-        );
-
-      }
-
-
-      /*
-        BAŞARILI
-      */
-
-      showOrderMessage(
-        "Siparişiniz alınmıştır.",
-        "success"
+        }
       );
 
 
-      button.textContent =
-        "SİPARİŞ ALINDI";
+    if (!itemResponse.ok) {
+
+      const errorText =
+        await itemResponse.text();
 
 
-      /*
-        SEPETİ TEMİZLE
-      */
+      throw new Error(
+        `Sipariş ürünleri kaydedilemedi: ${errorText}`
+      );
 
-      cart = {};
-
-      updateCartCount();
-
-      renderProducts();
-
-      document
-        .getElementById("orderNote")
-        .value = "";
+    }
 
 
-      /*
-        3 saniye sonra modal kapanır
-      */
+    /* ---------------------------------------------
+       SUCCESS
+    --------------------------------------------- */
 
-      setTimeout(() => {
+    showOrderMessage(
+      "Siparişiniz alınmıştır.",
+      "success"
+    );
+
+
+    button.textContent =
+      "SİPARİŞ ALINDI";
+
+
+    cart = {};
+
+
+    updateCartCount();
+
+    renderProducts();
+
+
+    document.getElementById(
+      "orderNote"
+    ).value = "";
+
+
+    setTimeout(
+      () => {
 
         closeCart();
 
-        document
-          .getElementById("orderMessage")
-          .textContent = "";
+        document.getElementById(
+          "orderMessage"
+        ).textContent = "";
 
-        button.disabled = false;
+
+        button.disabled =
+          false;
+
 
         button.textContent =
           "SİPARİŞ VER";
 
-        orderLocked = false;
 
-      }, 3000);
+        orderLocked =
+          false;
 
-
-    }
-
-    catch (error) {
-
-      console.error(error);
+      },
+      2500
+    );
 
 
-      showOrderMessage(
-        error.message,
-        "error"
-      );
+  }
+
+  catch (error) {
+
+    console.error(error);
 
 
-      /*
-        Hata durumunda
-        tekrar deneyebilmesi için
-        kilidi kaldırıyoruz.
-      */
+    showOrderMessage(
+      error.message,
+      "error"
+    );
 
-      setTimeout(() => {
 
-        button.disabled = false;
+    setTimeout(
+      () => {
+
+        button.disabled =
+          false;
 
         button.textContent =
           "SİPARİŞ VER";
 
-        orderLocked = false;
+        orderLocked =
+          false;
 
-      }, 10000);
+      },
+      5000
+    );
 
-    }
+  }
+
+}
+
+
+/* =====================================================
+   ORDER MESSAGE
+===================================================== */
+
+function showOrderMessage(
+  message,
+  type
+) {
+
+  const element =
+    document.getElementById(
+      "orderMessage"
+    );
+
+
+  element.className =
+    type === "success"
+      ? "success"
+      : "error";
+
+
+  element.textContent =
+    message;
+
+}
+
+
+/* =====================================================
+   TOAST
+===================================================== */
+
+let toastTimer = null;
+
+
+function showToast(message) {
+
+  const toast =
+    document.getElementById(
+      "toast"
+    );
+
+
+  toast.textContent =
+    message;
+
+
+  toast.classList.add(
+    "show"
+  );
+
+
+  clearTimeout(
+    toastTimer
+  );
+
+
+  toastTimer =
+    setTimeout(
+      () => {
+
+        toast.classList.remove(
+          "show"
+        );
+
+      },
+      2600
+    );
+
+}
+
+
+/* =====================================================
+   GARSON ÇAĞIR
+===================================================== */
+
+function callWaiter() {
+
+  if (!table) {
+
+    showToast(
+      "Masa bilgisi bulunamadı."
+    );
+
+    return;
 
   }
 
 
-  /* =========================================
-     SİPARİŞ MESAJI
-  ========================================= */
+  showToast(
+    `Masa ${table.table_number} için garson çağrısı hazır.`
+  );
 
-  function showOrderMessage(
-    message,
-    type
-  ) {
+}
 
-    const element =
+
+/* =====================================================
+   HESAP İSTE
+===================================================== */
+
+function requestBill() {
+
+  if (!table) {
+
+    showToast(
+      "Masa bilgisi bulunamadı."
+    );
+
+    return;
+
+  }
+
+
+  showToast(
+    `Masa ${table.table_number} için hesap talebi hazır.`
+  );
+
+}
+
+
+/* =====================================================
+   START APP
+===================================================== */
+
+async function startApp() {
+
+  try {
+
+    const tableLoaded =
+      await loadTable();
+
+
+    if (!tableLoaded) {
+
       document.getElementById(
-        "orderMessage"
-      );
-
-
-    element.className =
-      type === "success"
-        ? "success"
-        : "error";
-
-
-    element.textContent =
-      message;
-
-  }
-
-
-  /* =========================================
-     BAŞLAT
-  ========================================= */
-
-  async function startApp() {
-
-    try {
-
-      const tableLoaded =
-        await loadTable();
-
-
-      if (!tableLoaded) {
-
-        document.getElementById("products")
-          .innerHTML =
-          `<div class="message error">
-            Masa bağlantısı kurulamadı.
-          </div>`;
-
-        return;
-
-      }
-
-
-      await loadCategories();
-
-      await loadProducts();
-
-
-    }
-
-    catch (error) {
-
-      console.error(error);
-
-
-      document.getElementById("products")
-        .innerHTML =
+        "products"
+      ).innerHTML =
         `<div class="message error">
-          Menü yüklenirken bir hata oluştu.
-          <br><br>
-          ${escapeHtml(error.message)}
+          Masa bağlantısı kurulamadı.
         </div>`;
 
+      return;
+
     }
+
+
+    await loadCategories();
+
+    await loadProducts();
 
   }
 
+  catch (error) {
 
-  startApp();
+    console.error(error);
+
+
+    document.getElementById(
+      "products"
+    ).innerHTML =
+      `<div class="message error">
+
+        Menü yüklenirken bir hata oluştu.
+
+        <br><br>
+
+        ${escapeHtml(
+          error.message
+        )}
+
+      </div>`;
+
+  }
+
+}
+
+
+startApp();
 
 </script>
 
