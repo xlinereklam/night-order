@@ -14,64 +14,74 @@
     body {
       margin: 0;
       min-height: 100vh;
-      background: #111;
-      color: #fff;
+      background: #0b0b0b;
+      color: #ffffff;
       font-family: Arial, sans-serif;
       display: flex;
       align-items: center;
       justify-content: center;
+      padding: 20px;
     }
 
     .container {
       width: 100%;
-      max-width: 500px;
-      padding: 30px 20px;
-      text-align: center;
+      max-width: 480px;
     }
 
     .logo {
-      font-size: 28px;
-      font-weight: 700;
-      margin-bottom: 35px;
-      letter-spacing: 2px;
-    }
-
-    .card {
-      background: #1c1c1c;
-      border-radius: 18px;
-      padding: 30px 20px;
-      border: 1px solid #333;
-    }
-
-    .label {
-      color: #aaa;
-      font-size: 14px;
-      margin-bottom: 10px;
-    }
-
-    .table-number {
-      font-size: 52px;
-      font-weight: 800;
-      margin-bottom: 25px;
-    }
-
-    .status {
-      padding: 14px;
-      border-radius: 10px;
-      background: #172b1b;
-      color: #65d477;
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+      letter-spacing: 4px;
       margin-bottom: 20px;
     }
 
-    .error {
-      background: #321818;
-      color: #ff7777;
-      padding: 14px;
-      border-radius: 10px;
+    .card {
+      background: #151515;
+      border: 1px solid #292929;
+      border-radius: 20px;
+      padding: 35px 25px;
+      text-align: center;
+      box-shadow: 0 15px 50px rgba(0,0,0,0.4);
     }
 
     .loading {
       color: #aaa;
+      font-size: 15px;
+    }
+
+    .label {
+      color: #888;
+      font-size: 12px;
+      letter-spacing: 3px;
+      margin-bottom: 12px;
+    }
+
+    .table-number {
+      font-size: 42px;
+      font-weight: bold;
+      margin-bottom: 18px;
+    }
+
+    .status {
+      display: inline-block;
+      background: #123d25;
+      color: #5cff9a;
+      padding: 8px 14px;
+      border-radius: 30px;
+      font-size: 13px;
+      margin-bottom: 20px;
+    }
+
+    .message {
+      color: #aaa;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .error {
+      color: #ff6b6b;
+      line-height: 1.6;
     }
   </style>
 </head>
@@ -99,12 +109,6 @@
 
   <script>
 
-    /*
-    ==========================================
-    SUPABASE
-    ==========================================
-    */
-
     const SUPABASE_URL =
       "https://qkevbwcwsbgftvgxgasy.supabase.co";
 
@@ -113,29 +117,21 @@
 
 
     /*
-    ==========================================
-    URL'DEN MASA TOKENINI AL
-    ==========================================
+      MASA TOKENINI URL'DEN ALIYORUZ.
+
+      Örnek:
+
+      ?t=b8773255-8145-40c7-be0b-46612423745a
     */
 
-    const path = window.location.pathname;
+    const params = new URLSearchParams(window.location.search);
 
-    const token = path
-      .split("/")
-      .filter(Boolean)
-      .pop();
+    const token = params.get("t");
 
-
-    /*
-    ==========================================
-    MASA BİLGİSİNİ SUPABASE'DEN AL
-    ==========================================
-    */
 
     async function loadTable() {
 
-      const content =
-        document.getElementById("content");
+      const content = document.getElementById("content");
 
 
       if (!token) {
@@ -152,24 +148,27 @@
 
       try {
 
-        const response = await fetch(
-
+        const url =
           `${SUPABASE_URL}/rest/v1/tables` +
           `?token=eq.${encodeURIComponent(token)}` +
           `&active=eq.true` +
-          `&select=table_number,token`,
+          `&select=table_number,token`;
 
-          {
-            method: "GET",
 
-            headers: {
-              "apikey": SUPABASE_ANON_KEY,
-              "Authorization":
-                `Bearer ${SUPABASE_ANON_KEY}`
-            }
+        const response = await fetch(url, {
+
+          method: "GET",
+
+          headers: {
+
+            "apikey": SUPABASE_ANON_KEY,
+
+            "Authorization":
+              `Bearer ${SUPABASE_ANON_KEY}`
+
           }
 
-        );
+        });
 
 
         if (!response.ok) {
@@ -181,8 +180,7 @@
         }
 
 
-        const data =
-          await response.json();
+        const data = await response.json();
 
 
         if (!data.length) {
@@ -214,27 +212,32 @@
             ● Sipariş sistemi açık
           </div>
 
-          <p>
+          <div class="message">
+            Sistem bağlantısı başarılı.<br>
             Menü hazırlanıyor...
-          </p>
+          </div>
 
         `;
 
       }
 
+
       catch (error) {
 
-        console.error(
-          "Supabase Error:",
-          error
-        );
-
+        console.error(error);
 
         content.innerHTML = `
 
           <div class="error">
-            Sistem bağlantısında
-            bir problem oluştu.
+
+            Sistem bağlantısında bir problem oluştu.
+
+            <br><br>
+
+            <small>
+              ${error.message}
+            </small>
+
           </div>
 
         `;
