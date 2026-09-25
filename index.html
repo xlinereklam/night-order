@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Night Order</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #111;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 500px;
+      padding: 30px 20px;
+      text-align: center;
+    }
+
+    .logo {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 35px;
+      letter-spacing: 2px;
+    }
+
+    .card {
+      background: #1c1c1c;
+      border-radius: 18px;
+      padding: 30px 20px;
+      border: 1px solid #333;
+    }
+
+    .label {
+      color: #aaa;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+
+    .table-number {
+      font-size: 52px;
+      font-weight: 800;
+      margin-bottom: 25px;
+    }
+
+    .status {
+      padding: 14px;
+      border-radius: 10px;
+      background: #172b1b;
+      color: #65d477;
+      margin-bottom: 20px;
+    }
+
+    .error {
+      background: #321818;
+      color: #ff7777;
+      padding: 14px;
+      border-radius: 10px;
+    }
+
+    .loading {
+      color: #aaa;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <div class="logo">
+      NIGHT ORDER
+    </div>
+
+    <div class="card">
+
+      <div id="content">
+        <div class="loading">
+          Masa bilgisi yükleniyor...
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <script>
+
+    /*
+    ==========================================
+    SUPABASE
+    ==========================================
+    */
+
+    const SUPABASE_URL =
+      "https://qkevbwcwsbgftvgxgasy.supabase.co";
+
+    const SUPABASE_ANON_KEY =
+      "sb_publishable_l39-lwrk--GgVkKDFEoPIA_1pmKKPTu";
+
+
+    /*
+    ==========================================
+    URL'DEN MASA TOKENINI AL
+    ==========================================
+    */
+
+    const path = window.location.pathname;
+
+    const token = path
+      .split("/")
+      .filter(Boolean)
+      .pop();
+
+
+    /*
+    ==========================================
+    MASA BİLGİSİNİ SUPABASE'DEN AL
+    ==========================================
+    */
+
+    async function loadTable() {
+
+      const content =
+        document.getElementById("content");
+
+
+      if (!token) {
+
+        content.innerHTML = `
+          <div class="error">
+            Masa bilgisi bulunamadı.
+          </div>
+        `;
+
+        return;
+      }
+
+
+      try {
+
+        const response = await fetch(
+
+          `${SUPABASE_URL}/rest/v1/tables` +
+          `?token=eq.${encodeURIComponent(token)}` +
+          `&active=eq.true` +
+          `&select=table_number,token`,
+
+          {
+            method: "GET",
+
+            headers: {
+              "apikey": SUPABASE_ANON_KEY,
+              "Authorization":
+                `Bearer ${SUPABASE_ANON_KEY}`
+            }
+          }
+
+        );
+
+
+        if (!response.ok) {
+
+          throw new Error(
+            `HTTP ${response.status}`
+          );
+
+        }
+
+
+        const data =
+          await response.json();
+
+
+        if (!data.length) {
+
+          content.innerHTML = `
+            <div class="error">
+              Geçersiz veya pasif masa.
+            </div>
+          `;
+
+          return;
+        }
+
+
+        const table = data[0];
+
+
+        content.innerHTML = `
+
+          <div class="label">
+            HOŞ GELDİNİZ
+          </div>
+
+          <div class="table-number">
+            MASA ${table.table_number}
+          </div>
+
+          <div class="status">
+            ● Sipariş sistemi açık
+          </div>
+
+          <p>
+            Menü hazırlanıyor...
+          </p>
+
+        `;
+
+      }
+
+      catch (error) {
+
+        console.error(
+          "Supabase Error:",
+          error
+        );
+
+
+        content.innerHTML = `
+
+          <div class="error">
+            Sistem bağlantısında
+            bir problem oluştu.
+          </div>
+
+        `;
+
+      }
+
+    }
+
+
+    loadTable();
+
+  </script>
+
+</body>
+</html>
