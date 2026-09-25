@@ -6,7 +6,431 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
 <title>Night Order</title>
+/* =====================================================
+   HARRY'S NIGHT MENU — NEW DESIGN
+   ===================================================== */
 
+:root {
+  --bg: #080808;
+  --surface: #111111;
+  --surface-2: #171717;
+  --line: rgba(255,255,255,.08);
+  --text: #ffffff;
+  --muted: #9a9a9a;
+  --accent: #e3262e;
+}
+
+/* PAGE */
+
+body {
+  background:
+    radial-gradient(
+      circle at 50% -15%,
+      rgba(170, 25, 30, .22),
+      transparent 38%
+    ),
+    #080808;
+  color: var(--text);
+}
+
+/* MAIN */
+
+.app {
+  max-width: 680px;
+  padding-bottom: 145px;
+}
+
+/* =====================================================
+   HEADER
+   ===================================================== */
+
+.header {
+  position: relative;
+  padding: 26px 18px 18px;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,.035),
+      rgba(255,255,255,0)
+    );
+}
+
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 72px;
+}
+
+.header-top img {
+  max-width: 175px;
+  max-height: 70px;
+  object-fit: contain;
+}
+
+/* MASA */
+
+.table-info {
+  margin: 12px auto 0;
+  width: fit-content;
+  padding: 7px 14px;
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 999px;
+  background: rgba(255,255,255,.04);
+  color: #bdbdbd;
+  font-size: 11px;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+}
+
+/* =====================================================
+   HERO
+   ===================================================== */
+
+.hero {
+  margin: 0 14px 18px;
+  min-height: 150px;
+  border-radius: 22px;
+  overflow: hidden;
+  position: relative;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(120,0,0,.35),
+      rgba(0,0,0,.8)
+    );
+  border: 1px solid rgba(255,255,255,.08);
+}
+
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      circle at 80% 20%,
+      rgba(255,50,50,.25),
+      transparent 40%
+    );
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  padding: 28px 22px;
+}
+
+.hero-kicker {
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: #a9a9a9;
+  text-transform: uppercase;
+  margin-bottom: 9px;
+}
+
+.hero-title {
+  margin: 0;
+  font-size: 31px;
+  line-height: 1;
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+
+.hero-subtitle {
+  margin-top: 10px;
+  color: #aaa;
+  font-size: 13px;
+}
+
+/* =====================================================
+   CATEGORY BAR
+   ===================================================== */
+
+.categories {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 4px 14px 15px;
+  scrollbar-width: none;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: rgba(8,8,8,.88);
+  backdrop-filter: blur(16px);
+}
+
+.categories::-webkit-scrollbar {
+  display: none;
+}
+
+.category {
+  flex: 0 0 auto;
+  border: 1px solid var(--line);
+  background: #111;
+  color: #999;
+  border-radius: 999px;
+  padding: 10px 15px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .5px;
+  white-space: nowrap;
+}
+
+.category.active {
+  background: #fff;
+  color: #080808;
+  border-color: #fff;
+}
+
+/* =====================================================
+   PRODUCT LIST
+   ===================================================== */
+
+.products {
+  padding: 2px 14px;
+}
+
+/* PRODUCT CARD */
+
+.product-card {
+  position: relative;
+  display: flex;
+  gap: 15px;
+  margin-bottom: 12px;
+  padding: 11px;
+  border-radius: 18px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,.055),
+      rgba(255,255,255,.018)
+    );
+  border: 1px solid rgba(255,255,255,.07);
+  box-shadow: 0 12px 30px rgba(0,0,0,.22);
+  overflow: hidden;
+  transition: transform .18s ease;
+}
+
+.product-card:active {
+  transform: scale(.985);
+}
+
+/* PRODUCT IMAGE */
+
+.product-image-wrap {
+  width: 100px;
+  height: 100px;
+  min-width: 100px;
+  border-radius: 14px;
+  overflow: hidden;
+  background:
+    radial-gradient(
+      circle,
+      #252525,
+      #101010
+    );
+  border: 1px solid rgba(255,255,255,.07);
+}
+
+.product-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* PRODUCT CONTENT */
+
+.product-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 3px 2px;
+}
+
+.product-name {
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -.2px;
+}
+
+.product-description {
+  margin-top: 6px;
+  color: #888;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.product-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 9px;
+}
+
+.product-price {
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.add-button {
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 50%;
+  background: #fff;
+  color: #000;
+  font-size: 23px;
+  font-weight: 400;
+  line-height: 1;
+  box-shadow: 0 5px 15px rgba(0,0,0,.35);
+}
+
+/* =====================================================
+   QUICK ACTIONS
+   ===================================================== */
+
+.quick-actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 9px;
+  padding: 8px 14px 20px;
+}
+
+.quick-actions button {
+  min-height: 52px;
+  border-radius: 15px;
+  border: 1px solid rgba(255,255,255,.09);
+  background: #111;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: .8px;
+}
+
+.quick-actions button:first-child {
+  background:
+    linear-gradient(
+      135deg,
+      #d91f27,
+      #8d1116
+    );
+  border-color: transparent;
+}
+
+/* =====================================================
+   CART BAR
+   ===================================================== */
+
+.cart-bar {
+  position: fixed;
+  left: 50%;
+  bottom: 12px;
+  transform: translateX(-50%);
+  width: min(650px, calc(100% - 24px));
+  min-height: 62px;
+  z-index: 100;
+  border-radius: 20px;
+  background: rgba(20,20,20,.94);
+  border: 1px solid rgba(255,255,255,.12);
+  box-shadow:
+    0 15px 45px rgba(0,0,0,.55);
+  backdrop-filter: blur(18px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 11px 9px 17px;
+}
+
+.cart-bar button {
+  border: 0;
+  border-radius: 14px;
+  background: #fff;
+  color: #000;
+  padding: 12px 17px;
+  font-weight: 800;
+}
+
+/* =====================================================
+   FOOTER
+   ===================================================== */
+
+.footer {
+  text-align: center;
+  padding: 30px 20px 110px;
+  color: #666;
+  font-size: 10px;
+  line-height: 1.6;
+}
+
+.footer img {
+  display: block;
+  width: 72px;
+  max-height: 35px;
+  object-fit: contain;
+  margin: 12px auto;
+  opacity: .65;
+}
+
+.footer-phone {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 155px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.1);
+  background: #111;
+  color: #fff;
+  text-decoration: none;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+/* =====================================================
+   MODALS
+   ===================================================== */
+
+.modal {
+  backdrop-filter: blur(10px);
+}
+
+.modal-content {
+  border-radius: 24px;
+  background: #111;
+  border: 1px solid rgba(255,255,255,.1);
+  box-shadow: 0 25px 80px rgba(0,0,0,.65);
+}
+
+/* =====================================================
+   MOBILE
+   ===================================================== */
+
+@media (max-width: 420px) {
+
+  .product-card {
+    gap: 12px;
+    padding: 9px;
+  }
+
+  .product-image-wrap {
+    width: 88px;
+    height: 88px;
+    min-width: 88px;
+  }
+
+  .product-name {
+    font-size: 14px;
+  }
+
+  .hero-title {
+    font-size: 28px;
+  }
+
+}
 <style>
 
 * {
