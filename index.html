@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -53,9 +54,7 @@ button{
     padding:18px 14px 120px;
 }
 
-/* =========================
-   HEADER
-========================= */
+/* HEADER */
 
 .hero{
     position:relative;
@@ -116,9 +115,7 @@ button{
     box-shadow:0 0 10px rgba(214,179,106,.8);
 }
 
-/* =========================
-   QUICK ACTION
-========================= */
+/* QUICK ACTION */
 
 .quick-area{
     margin:4px 0 20px;
@@ -149,9 +146,7 @@ button{
     font-size:18px;
 }
 
-/* =========================
-   SECTION TITLE
-========================= */
+/* SECTION TITLE */
 
 .section-title{
     display:flex;
@@ -172,9 +167,7 @@ button{
     font-size:11px;
 }
 
-/* =========================
-   CATEGORIES
-========================= */
+/* CATEGORIES */
 
 .categories{
     display:flex;
@@ -207,9 +200,7 @@ button{
     font-weight:700;
 }
 
-/* =========================
-   PRODUCTS
-========================= */
+/* PRODUCTS */
 
 .products{
     display:flex;
@@ -339,9 +330,7 @@ button{
     font-weight:700;
 }
 
-/* =========================
-   LOADING / EMPTY
-========================= */
+/* LOADING */
 
 .loading,
 .empty,
@@ -369,9 +358,7 @@ button{
     cursor:pointer;
 }
 
-/* =========================
-   CART BAR
-========================= */
+/* CART BAR */
 
 .cart-bar{
     position:fixed;
@@ -422,9 +409,7 @@ button{
     font-size:11px;
 }
 
-/* =========================
-   MODAL
-========================= */
+/* MODAL */
 
 .modal{
     position:fixed;
@@ -535,9 +520,7 @@ button{
     font-weight:800;
 }
 
-/* =========================
-   PAYMENT
-========================= */
+/* PAYMENT */
 
 .payment-title{
     font-size:13px;
@@ -606,9 +589,7 @@ button{
     cursor:not-allowed;
 }
 
-/* =========================
-   FOOTER
-========================= */
+/* FOOTER */
 
 .footer{
     text-align:center;
@@ -646,9 +627,7 @@ button{
     color:var(--gold-light);
 }
 
-/* =========================
-   TOAST
-========================= */
+/* TOAST */
 
 .toast{
     position:fixed;
@@ -673,9 +652,7 @@ button{
     transform:translate(-50%,0);
 }
 
-/* =========================
-   DESKTOP
-========================= */
+/* DESKTOP */
 
 @media(min-width:700px){
     .app{
@@ -699,10 +676,11 @@ button{
 
 <div class="app">
 
-    <!-- HEADER -->
     <header class="hero">
 
-        <div class="venue-label">NIGHT MENU</div>
+        <div class="venue-label">
+            NIGHT MENU
+        </div>
 
         <img
             src="harrys-logo.png"
@@ -718,13 +696,13 @@ button{
 
         <div class="table-badge">
             <span class="table-dot"></span>
-            <span id="tableText">Masa bağlantısı kuruluyor...</span>
+            <span id="tableText">
+                Masa bağlantısı kuruluyor...
+            </span>
         </div>
 
     </header>
 
-
-    <!-- QUICK ACTION -->
     <section class="quick-area">
 
         <button
@@ -738,8 +716,6 @@ button{
 
     </section>
 
-
-    <!-- CATEGORIES -->
     <section>
 
         <div class="section-title">
@@ -754,8 +730,6 @@ button{
 
     </section>
 
-
-    <!-- PRODUCTS -->
     <section>
 
         <div
@@ -769,8 +743,6 @@ button{
 
     </section>
 
-
-    <!-- FOOTER -->
     <footer class="footer">
 
         Bu yazılım
@@ -800,8 +772,6 @@ button{
 
 </div>
 
-
-<!-- CART BAR -->
 <div
     class="cart-bar"
     id="cartBar"
@@ -813,17 +783,25 @@ button{
     >
 
         <span class="cart-summary">
-            <span class="cart-count" id="cartCount">0</span>
-            <span>Sepeti Gör</span>
+            <span
+                class="cart-count"
+                id="cartCount"
+            >
+                0
+            </span>
+
+            <span>
+                Sepeti Gör
+            </span>
         </span>
 
-        <span id="cartBarTotal">₺0,00</span>
+        <span id="cartBarTotal">
+            ₺0,00
+        </span>
 
     </button>
 </div>
 
-
-<!-- CART MODAL -->
 <div
     class="modal"
     id="cartModal"
@@ -847,12 +825,10 @@ button{
 
         </div>
 
-
         <div
             class="cart-items"
             id="cartItems"
         ></div>
-
 
         <div class="cart-total">
 
@@ -868,7 +844,6 @@ button{
             </span>
 
         </div>
-
 
         <div class="payment-title">
             Ödeme
@@ -894,7 +869,6 @@ button{
 
         </div>
 
-
         <label
             class="note-label"
             for="orderNote"
@@ -908,7 +882,6 @@ button{
             placeholder="Özel bir isteğin varsa yazabilirsin..."
         ></textarea>
 
-
         <button
             type="button"
             class="submit-order"
@@ -921,13 +894,10 @@ button{
 
 </div>
 
-
-<!-- TOAST -->
 <div
     class="toast"
     id="toast"
 ></div>
-
 
 <script>
 
@@ -947,7 +917,9 @@ const SUPABASE_ANON_KEY =
 ========================================================= */
 
 const params =
-    new URLSearchParams(window.location.search);
+    new URLSearchParams(
+        window.location.search
+    );
 
 const token =
     params.get("t");
@@ -958,7 +930,9 @@ const token =
 ========================================================= */
 
 let table = null;
+
 let categories = [];
+
 let products = [];
 
 let activeCategory = null;
@@ -975,40 +949,64 @@ let orderLocked = false;
 ========================================================= */
 
 const tableText =
-    document.getElementById("tableText");
+    document.getElementById(
+        "tableText"
+    );
 
 const categoriesEl =
-    document.getElementById("categories");
+    document.getElementById(
+        "categories"
+    );
 
 const productsEl =
-    document.getElementById("products");
+    document.getElementById(
+        "products"
+    );
 
 const cartBar =
-    document.getElementById("cartBar");
+    document.getElementById(
+        "cartBar"
+    );
 
 const cartCountEl =
-    document.getElementById("cartCount");
+    document.getElementById(
+        "cartCount"
+    );
 
 const cartBarTotalEl =
-    document.getElementById("cartBarTotal");
+    document.getElementById(
+        "cartBarTotal"
+    );
 
 const cartModal =
-    document.getElementById("cartModal");
+    document.getElementById(
+        "cartModal"
+    );
 
 const cartItemsEl =
-    document.getElementById("cartItems");
+    document.getElementById(
+        "cartItems"
+    );
 
 const cartTotalEl =
-    document.getElementById("cartTotal");
+    document.getElementById(
+        "cartTotal"
+    );
 
 const orderNoteEl =
-    document.getElementById("orderNote");
+    document.getElementById(
+        "orderNote"
+    );
 
 const submitOrderButton =
-    document.getElementById("submitOrderButton");
+    document.getElementById(
+        "submitOrderButton"
+    );
 
 const toastEl =
-    document.getElementById("toast");
+    document.getElementById(
+        "toast"
+    );
 
 
 /* =========================================================
@@ -1017,13 +1015,14 @@ const toastEl =
 
 function formatPrice(value){
 
-    const number =
-        Number(value || 0);
-
-    return number.toLocaleString("tr-TR", {
-        style:"currency",
-        currency:"TRY"
-    });
+    return Number(value || 0)
+        .toLocaleString(
+            "tr-TR",
+            {
+                style:"currency",
+                currency:"TRY"
+            }
+        );
 
 }
 
@@ -1045,16 +1044,25 @@ function showToast(message){
     toastEl.textContent =
         message;
 
-    toastEl.classList.add("show");
+    toastEl.classList.add(
+        "show"
+    );
 
-    clearTimeout(window.toastTimer);
+    clearTimeout(
+        window.toastTimer
+    );
 
     window.toastTimer =
-        setTimeout(() => {
+        setTimeout(
+            () => {
 
-            toastEl.classList.remove("show");
+                toastEl.classList.remove(
+                    "show"
+                );
 
-        },2500);
+            },
+            3000
+        );
 
 }
 
@@ -1115,13 +1123,19 @@ async function supabaseFetch(
     if(!response.ok){
 
         const message =
-            typeof data === "object" && data?.message
+            typeof data === "object" &&
+            data?.message
                 ? data.message
-                : typeof data === "object" && data?.details
+                : typeof data === "object" &&
+                  data?.details
                     ? data.details
-                    : text || "Supabase hatası";
+                    : text ||
+                      "Supabase hatası";
 
-        throw new Error(message);
+
+        throw new Error(
+            message
+        );
 
     }
 
@@ -1152,7 +1166,10 @@ async function loadTable(){
         );
 
 
-    if(!Array.isArray(data) || data.length === 0){
+    if(
+        !Array.isArray(data) ||
+        data.length === 0
+    ){
 
         throw new Error(
             "Masa bulunamadı veya masa pasif durumda."
@@ -1192,7 +1209,9 @@ async function loadCategories(){
     if(categories.length){
 
         activeCategory =
-            String(categories[0].id);
+            String(
+                categories[0].id
+            );
 
     }
 
@@ -1231,64 +1250,76 @@ async function loadProducts(){
 
 function renderCategories(){
 
-    categoriesEl.innerHTML = "";
+    categoriesEl.innerHTML =
+        "";
 
 
-    categories.forEach(category => {
+    categories.forEach(
+        category => {
 
-        const button =
-            document.createElement("button");
-
-        button.type =
-            "button";
-
-        button.className =
-            "category-btn";
+            const button =
+                document.createElement(
+                    "button"
+                );
 
 
-        if(
-            String(category.id) ===
-            String(activeCategory)
-        ){
+            button.type =
+                "button";
 
-            button.classList.add("active");
-
-        }
+            button.className =
+                "category-btn";
 
 
-        button.textContent =
-            category.name;
+            if(
+                String(category.id) ===
+                String(activeCategory)
+            ){
 
-
-        button.addEventListener(
-            "click",
-            () => {
-
-                activeCategory =
-                    String(category.id);
-
-                renderCategories();
-
-                renderProducts();
-
-                window.scrollTo({
-                    top:0,
-                    behavior:"smooth"
-                });
+                button.classList.add(
+                    "active"
+                );
 
             }
-        );
 
 
-        categoriesEl.appendChild(button);
+            button.textContent =
+                category.name;
 
-    });
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    activeCategory =
+                        String(
+                            category.id
+                        );
+
+                    renderCategories();
+
+                    renderProducts();
+
+                    window.scrollTo({
+                        top:0,
+                        behavior:"smooth"
+                    });
+
+                }
+            );
+
+
+            categoriesEl.appendChild(
+                button
+            );
+
+        }
+    );
 
 }
 
 
 /* =========================================================
-   GET PRODUCT QUANTITY
+   GET QUANTITY
 ========================================================= */
 
 function getQuantity(productId){
@@ -1296,8 +1327,11 @@ function getQuantity(productId){
     const key =
         String(productId);
 
+
     return cart[key]
-        ? Number(cart[key].quantity || 0)
+        ? Number(
+            cart[key].quantity || 0
+          )
         : 0;
 
 }
@@ -1309,7 +1343,8 @@ function getQuantity(productId){
 
 function renderProducts(){
 
-    productsEl.innerHTML = "";
+    productsEl.innerHTML =
+        "";
 
 
     if(!products.length){
@@ -1323,18 +1358,26 @@ function renderProducts(){
 
 
     const filtered =
-        products.filter(product => {
+        products.filter(
+            product => {
 
-            if(activeCategory === null){
+                if(
+                    activeCategory === null
+                ){
 
-                return true;
+                    return true;
+
+                }
+
+
+                return String(
+                    product.category_id
+                ) === String(
+                    activeCategory
+                );
 
             }
-
-            return String(product.category_id) ===
-                   String(activeCategory);
-
-        });
+        );
 
 
     if(!filtered.length){
@@ -1347,253 +1390,311 @@ function renderProducts(){
     }
 
 
-    filtered.forEach(product => {
+    filtered.forEach(
+        product => {
 
-        const quantity =
-            getQuantity(product.id);
-
-
-        const card =
-            document.createElement("article");
-
-        card.className =
-            "product-card";
+            const quantity =
+                getQuantity(
+                    product.id
+                );
 
 
-        if(quantity > 0){
-
-            card.classList.add("has-cart");
-
-        }
-
-
-        /* IMAGE */
-
-        const imageBox =
-            document.createElement("div");
-
-        imageBox.className =
-            "product-image";
+            const card =
+                document.createElement(
+                    "article"
+                );
 
 
-        if(product.image_url){
+            card.className =
+                "product-card";
 
-            const img =
-                document.createElement("img");
 
-            img.src =
-                product.image_url;
+            if(quantity > 0){
 
-            img.alt =
+                card.classList.add(
+                    "has-cart"
+                );
+
+            }
+
+
+            const imageBox =
+                document.createElement(
+                    "div"
+                );
+
+            imageBox.className =
+                "product-image";
+
+
+            if(product.image_url){
+
+                const img =
+                    document.createElement(
+                        "img"
+                    );
+
+
+                img.src =
+                    product.image_url;
+
+                img.alt =
+                    product.name;
+
+                img.loading =
+                    "lazy";
+
+
+                img.onerror =
+                    function(){
+
+                        this.style.display =
+                            "none";
+
+                        imageBox.innerHTML =
+                            `<span class="no-image">HARRY'S</span>`;
+
+                    };
+
+
+                imageBox.appendChild(
+                    img
+                );
+
+            }else{
+
+                imageBox.innerHTML =
+                    `<span class="no-image">HARRY'S</span>`;
+
+            }
+
+
+            const info =
+                document.createElement(
+                    "div"
+                );
+
+            info.className =
+                "product-info";
+
+
+            const name =
+                document.createElement(
+                    "div"
+                );
+
+            name.className =
+                "product-name";
+
+            name.textContent =
                 product.name;
 
-            img.loading =
-                "lazy";
+
+            const description =
+                document.createElement(
+                    "div"
+                );
+
+            description.className =
+                "product-description";
+
+            description.textContent =
+                product.description || "";
 
 
-            img.onerror =
-                function(){
+            const price =
+                document.createElement(
+                    "div"
+                );
 
-                    this.style.display =
-                        "none";
+            price.className =
+                "product-price";
 
-                    imageBox.innerHTML =
-                        `<span class="no-image">HARRY'S</span>`;
-
-                };
-
-
-            imageBox.appendChild(img);
-
-        }else{
-
-            imageBox.innerHTML =
-                `<span class="no-image">HARRY'S</span>`;
-
-        }
+            price.textContent =
+                formatPrice(
+                    product.price
+                );
 
 
-        /* INFO */
-
-        const info =
-            document.createElement("div");
-
-        info.className =
-            "product-info";
-
-
-        const name =
-            document.createElement("div");
-
-        name.className =
-            "product-name";
-
-        name.textContent =
-            product.name;
-
-
-        const description =
-            document.createElement("div");
-
-        description.className =
-            "product-description";
-
-        description.textContent =
-            product.description || "";
-
-
-        const price =
-            document.createElement("div");
-
-        price.className =
-            "product-price";
-
-        price.textContent =
-            formatPrice(product.price);
-
-
-        info.appendChild(name);
-
-        if(product.description){
-
-            info.appendChild(description);
-
-        }
-
-        info.appendChild(price);
-
-
-        /* ACTION */
-
-        const actions =
-            document.createElement("div");
-
-        actions.className =
-            "product-actions";
-
-
-        if(quantity > 0){
-
-            const controls =
-                document.createElement("div");
-
-            controls.className =
-                "quantity-control";
-
-
-            const minus =
-                document.createElement("button");
-
-            minus.type =
-                "button";
-
-            minus.className =
-                "qty-button";
-
-            minus.textContent =
-                "−";
-
-
-            minus.addEventListener(
-                "click",
-                () => {
-
-                    changeQuantity(
-                        product.id,
-                        -1
-                    );
-
-                }
+            info.appendChild(
+                name
             );
 
 
-            const number =
-                document.createElement("span");
+            if(product.description){
 
-            number.className =
-                "qty-number";
+                info.appendChild(
+                    description
+                );
 
-            number.textContent =
-                quantity;
-
-
-            const plus =
-                document.createElement("button");
-
-            plus.type =
-                "button";
-
-            plus.className =
-                "qty-button";
-
-            plus.textContent =
-                "+";
+            }
 
 
-            plus.addEventListener(
-                "click",
-                () => {
-
-                    changeQuantity(
-                        product.id,
-                        1
-                    );
-
-                }
+            info.appendChild(
+                price
             );
 
 
-            controls.appendChild(minus);
+            const actions =
+                document.createElement(
+                    "div"
+                );
 
-            controls.appendChild(number);
-
-            controls.appendChild(plus);
-
-            actions.appendChild(controls);
-
-        }else{
-
-            const add =
-                document.createElement("button");
-
-            add.type =
-                "button";
-
-            add.className =
-                "add-button";
-
-            add.textContent =
-                "+";
+            actions.className =
+                "product-actions";
 
 
-            add.addEventListener(
-                "click",
-                () => {
+            if(quantity > 0){
 
-                    changeQuantity(
-                        product.id,
-                        1
+                const controls =
+                    document.createElement(
+                        "div"
                     );
 
-                }
+                controls.className =
+                    "quantity-control";
+
+
+                const minus =
+                    document.createElement(
+                        "button"
+                    );
+
+                minus.type =
+                    "button";
+
+                minus.className =
+                    "qty-button";
+
+                minus.textContent =
+                    "−";
+
+
+                minus.addEventListener(
+                    "click",
+                    () => {
+
+                        changeQuantity(
+                            product.id,
+                            -1
+                        );
+
+                    }
+                );
+
+
+                const number =
+                    document.createElement(
+                        "span"
+                    );
+
+                number.className =
+                    "qty-number";
+
+                number.textContent =
+                    quantity;
+
+
+                const plus =
+                    document.createElement(
+                        "button"
+                    );
+
+                plus.type =
+                    "button";
+
+                plus.className =
+                    "qty-button";
+
+                plus.textContent =
+                    "+";
+
+
+                plus.addEventListener(
+                    "click",
+                    () => {
+
+                        changeQuantity(
+                            product.id,
+                            1
+                        );
+
+                    }
+                );
+
+
+                controls.appendChild(
+                    minus
+                );
+
+                controls.appendChild(
+                    number
+                );
+
+                controls.appendChild(
+                    plus
+                );
+
+                actions.appendChild(
+                    controls
+                );
+
+            }else{
+
+                const add =
+                    document.createElement(
+                        "button"
+                    );
+
+                add.type =
+                    "button";
+
+                add.className =
+                    "add-button";
+
+                add.textContent =
+                    "+";
+
+
+                add.addEventListener(
+                    "click",
+                    () => {
+
+                        changeQuantity(
+                            product.id,
+                            1
+                        );
+
+                    }
+                );
+
+
+                actions.appendChild(
+                    add
+                );
+
+            }
+
+
+            card.appendChild(
+                imageBox
+            );
+
+            card.appendChild(
+                info
+            );
+
+            card.appendChild(
+                actions
             );
 
 
-            actions.appendChild(add);
+            productsEl.appendChild(
+                card
+            );
 
         }
-
-
-        card.appendChild(imageBox);
-
-        card.appendChild(info);
-
-        card.appendChild(actions);
-
-
-        productsEl.appendChild(card);
-
-    });
+    );
 
 }
 
@@ -1631,11 +1732,14 @@ function changeQuantity(
 
 
     const current =
-        getQuantity(productId);
+        getQuantity(
+            productId
+        );
 
 
     const next =
-        current + Number(amount);
+        current +
+        Number(amount);
 
 
     if(next <= 0){
@@ -1656,11 +1760,15 @@ function changeQuantity(
                 next,
 
             unit_price:
-                Number(product.price || 0),
+                Number(
+                    product.price || 0
+                ),
 
             total:
                 next *
-                Number(product.price || 0)
+                Number(
+                    product.price || 0
+                )
 
         };
 
@@ -1675,12 +1783,14 @@ function changeQuantity(
 
 
 /* =========================================================
-   CART TOTAL
+   CART
 ========================================================= */
 
 function getCartItems(){
 
-    return Object.values(cart);
+    return Object.values(
+        cart
+    );
 
 }
 
@@ -1690,7 +1800,10 @@ function getCartCount(){
     return getCartItems()
         .reduce(
             (sum,item) =>
-                sum + Number(item.quantity || 0),
+                sum +
+                Number(
+                    item.quantity || 0
+                ),
             0
         );
 
@@ -1702,7 +1815,10 @@ function getCartTotal(){
     return getCartItems()
         .reduce(
             (sum,item) =>
-                sum + Number(item.total || 0),
+                sum +
+                Number(
+                    item.total || 0
+                ),
             0
         );
 
@@ -1741,7 +1857,9 @@ function renderCartBar(){
 
 
     cartBarTotalEl.textContent =
-        formatPrice(total);
+        formatPrice(
+            total
+        );
 
 }
 
@@ -1754,7 +1872,9 @@ function openCart(){
 
     renderCart();
 
-    cartModal.classList.add("show");
+    cartModal.classList.add(
+        "show"
+    );
 
     document.body.style.overflow =
         "hidden";
@@ -1764,7 +1884,9 @@ function openCart(){
 
 function closeCart(){
 
-    cartModal.classList.remove("show");
+    cartModal.classList.remove(
+        "show"
+    );
 
     document.body.style.overflow =
         "";
@@ -1774,7 +1896,8 @@ function closeCart(){
 
 function renderCart(){
 
-    cartItemsEl.innerHTML = "";
+    cartItemsEl.innerHTML =
+        "";
 
 
     const items =
@@ -1794,135 +1917,169 @@ function renderCart(){
     }
 
 
-    items.forEach(item => {
+    items.forEach(
+        item => {
 
-        const row =
-            document.createElement("div");
-
-        row.className =
-            "cart-item";
-
-
-        const info =
-            document.createElement("div");
-
-        info.className =
-            "cart-item-info";
-
-
-        const name =
-            document.createElement("div");
-
-        name.className =
-            "cart-item-name";
-
-        name.textContent =
-            item.product_name;
-
-
-        const price =
-            document.createElement("div");
-
-        price.className =
-            "cart-item-price";
-
-        price.textContent =
-            `${formatPrice(item.unit_price)} × ${item.quantity}`;
-
-
-        info.appendChild(name);
-
-        info.appendChild(price);
-
-
-        const right =
-            document.createElement("div");
-
-        right.className =
-            "cart-item-right";
-
-
-        const minus =
-            document.createElement("button");
-
-        minus.type =
-            "button";
-
-        minus.className =
-            "qty-button";
-
-        minus.textContent =
-            "−";
-
-
-        minus.addEventListener(
-            "click",
-            () => {
-
-                changeQuantity(
-                    item.product_id,
-                    -1
+            const row =
+                document.createElement(
+                    "div"
                 );
 
-                renderCart();
-
-            }
-        );
+            row.className =
+                "cart-item";
 
 
-        const quantity =
-            document.createElement("span");
-
-        quantity.className =
-            "qty-number";
-
-        quantity.textContent =
-            item.quantity;
-
-
-        const plus =
-            document.createElement("button");
-
-        plus.type =
-            "button";
-
-        plus.className =
-            "qty-button";
-
-        plus.textContent =
-            "+";
-
-
-        plus.addEventListener(
-            "click",
-            () => {
-
-                changeQuantity(
-                    item.product_id,
-                    1
+            const info =
+                document.createElement(
+                    "div"
                 );
 
-                renderCart();
-
-            }
-        );
+            info.className =
+                "cart-item-info";
 
 
-        right.appendChild(minus);
+            const name =
+                document.createElement(
+                    "div"
+                );
 
-        right.appendChild(quantity);
+            name.className =
+                "cart-item-name";
 
-        right.appendChild(plus);
-
-
-        row.appendChild(info);
-
-        row.appendChild(right);
+            name.textContent =
+                item.product_name;
 
 
-        cartItemsEl.appendChild(row);
+            const price =
+                document.createElement(
+                    "div"
+                );
 
-    });
+            price.className =
+                "cart-item-price";
+
+            price.textContent =
+                `${formatPrice(item.unit_price)} × ${item.quantity}`;
+
+
+            info.appendChild(
+                name
+            );
+
+            info.appendChild(
+                price
+            );
+
+
+            const right =
+                document.createElement(
+                    "div"
+                );
+
+            right.className =
+                "cart-item-right";
+
+
+            const minus =
+                document.createElement(
+                    "button"
+                );
+
+            minus.type =
+                "button";
+
+            minus.className =
+                "qty-button";
+
+            minus.textContent =
+                "−";
+
+
+            minus.addEventListener(
+                "click",
+                () => {
+
+                    changeQuantity(
+                        item.product_id,
+                        -1
+                    );
+
+                    renderCart();
+
+                }
+            );
+
+
+            const quantity =
+                document.createElement(
+                    "span"
+                );
+
+            quantity.className =
+                "qty-number";
+
+            quantity.textContent =
+                item.quantity;
+
+
+            const plus =
+                document.createElement(
+                    "button"
+                );
+
+            plus.type =
+                "button";
+
+            plus.className =
+                "qty-button";
+
+            plus.textContent =
+                "+";
+
+
+            plus.addEventListener(
+                "click",
+                () => {
+
+                    changeQuantity(
+                        item.product_id,
+                        1
+                    );
+
+                    renderCart();
+
+                }
+            );
+
+
+            right.appendChild(
+                minus
+            );
+
+            right.appendChild(
+                quantity
+            );
+
+            right.appendChild(
+                plus
+            );
+
+
+            row.appendChild(
+                info
+            );
+
+            row.appendChild(
+                right
+            );
+
+
+            cartItemsEl.appendChild(
+                row
+            );
+
+        }
+    );
 
 
     cartTotalEl.textContent =
@@ -1934,40 +2091,53 @@ function renderCart(){
 
 
 /* =========================================================
-   PAYMENT BUTTONS
+   PAYMENT
 ========================================================= */
 
 document
-    .querySelectorAll(".payment-button")
-    .forEach(button => {
+    .querySelectorAll(
+        ".payment-button"
+    )
+    .forEach(
+        button => {
 
-        button.addEventListener(
-            "click",
-            () => {
+            button.addEventListener(
+                "click",
+                () => {
 
-                paymentMethod =
-                    button.dataset.payment;
-
-
-                document
-                    .querySelectorAll(".payment-button")
-                    .forEach(btn => {
-
-                        btn.classList.remove("active");
-
-                    });
+                    paymentMethod =
+                        button.dataset.payment;
 
 
-                button.classList.add("active");
+                    document
+                        .querySelectorAll(
+                            ".payment-button"
+                        )
+                        .forEach(
+                            btn => {
 
-            }
-        );
+                                btn.classList.remove(
+                                    "active"
+                                );
 
-    });
+                            }
+                        );
+
+
+                    button.classList.add(
+                        "active"
+                    );
+
+                }
+            );
+
+        }
+    );
 
 
 /* =========================================================
    SEND ORDER
+   RPC / TRANSACTIONAL VERSION
 ========================================================= */
 
 async function submitOrder(){
@@ -2008,8 +2178,10 @@ async function submitOrder(){
     orderLocked =
         true;
 
+
     submitOrderButton.disabled =
         true;
+
 
     submitOrderButton.textContent =
         "Sipariş gönderiliyor...";
@@ -2017,19 +2189,37 @@ async function submitOrder(){
 
     try{
 
-        const total =
-            getCartTotal();
-
-
         const note =
             orderNoteEl.value.trim();
 
 
-        /* CREATE ORDER */
+        /*
+         * Sadece ürün ID ve adet gönderiyoruz.
+         * Fiyatı Supabase RPC kendisi
+         * products tablosundan alıyor.
+         */
 
-        const orderData =
+        const rpcItems =
+            items.map(
+                item => ({
+
+                    product_id:
+                        Number(
+                            item.product_id
+                        ),
+
+                    quantity:
+                        Number(
+                            item.quantity
+                        )
+
+                })
+            );
+
+
+        const result =
             await supabaseFetch(
-                "/rest/v1/orders",
+                "/rest/v1/rpc/create_order",
                 {
                     method:"POST",
 
@@ -2040,75 +2230,41 @@ async function submitOrder(){
 
                     body:JSON.stringify({
 
-                        table_id:
-                            table.id,
+                        p_table_id:
+                            Number(
+                                table.id
+                            ),
 
-                        status:
-                            "pending",
-
-                        payment_method:
+                        p_payment_method:
                             paymentMethod,
 
-                        note:
+                        p_note:
                             note || null,
 
-                        total:
-                            total
+                        p_items:
+                            rpcItems
 
                     })
                 }
             );
 
 
-        const order =
-            Array.isArray(orderData)
-                ? orderData[0]
-                : orderData;
-
-
-        if(!order || !order.id){
+        if(
+            !result ||
+            result.success !== true ||
+            !result.order_id
+        ){
 
             throw new Error(
-                "Sipariş oluşturuldu ancak sipariş numarası alınamadı."
+                "Sipariş oluşturuldu ancak onay alınamadı."
             );
 
         }
 
 
-        /* CREATE ORDER ITEMS */
-
-        const orderItems =
-            items.map(item => ({
-
-                order_id:
-                    order.id,
-
-                product_id:
-                    item.product_id,
-
-                product_name:
-                    item.product_name,
-
-                quantity:
-                    item.quantity,
-
-                unit_price:
-                    item.unit_price,
-
-                total:
-                    item.total
-
-            }));
-
-
-        await supabaseFetch(
-            "/rest/v1/order_items",
-            {
-                method:"POST",
-
-                body:
-                    JSON.stringify(orderItems)
-            }
+        console.log(
+            "SİPARİŞ OLUŞTURULDU:",
+            result
         );
 
 
@@ -2127,7 +2283,7 @@ async function submitOrder(){
 
 
         showToast(
-            "Siparişin başarıyla gönderildi."
+            `Siparişin alındı. #${result.order_id}`
         );
 
 
@@ -2150,8 +2306,10 @@ async function submitOrder(){
         orderLocked =
             false;
 
+
         submitOrderButton.disabled =
             false;
+
 
         submitOrderButton.textContent =
             "Siparişi Gönder";
@@ -2179,12 +2337,17 @@ async function callWaiter(){
 
 
     const waiterButton =
-        document.getElementById("waiterButton");
+        document.getElementById(
+            "waiterButton"
+        );
 
 
-    waiterButton.disabled = true;
+    waiterButton.disabled =
+        true;
 
-    waiterButton.style.opacity = "0.6";
+
+    waiterButton.style.opacity =
+        "0.6";
 
 
     try{
@@ -2230,26 +2393,32 @@ async function callWaiter(){
 
     }finally{
 
-        setTimeout(() => {
+        setTimeout(
+            () => {
 
-            waiterButton.disabled =
-                false;
+                waiterButton.disabled =
+                    false;
 
-            waiterButton.style.opacity =
-                "";
+                waiterButton.style.opacity =
+                    "";
 
-        },3000);
+            },
+            3000
+        );
 
     }
 
 }
+
 
 /* =========================================================
    BUTTON EVENTS
 ========================================================= */
 
 document
-    .getElementById("openCartButton")
+    .getElementById(
+        "openCartButton"
+    )
     .addEventListener(
         "click",
         openCart
@@ -2257,7 +2426,9 @@ document
 
 
 document
-    .getElementById("closeCartButton")
+    .getElementById(
+        "closeCartButton"
+    )
     .addEventListener(
         "click",
         closeCart
@@ -2265,7 +2436,9 @@ document
 
 
 document
-    .getElementById("submitOrderButton")
+    .getElementById(
+        "submitOrderButton"
+    )
     .addEventListener(
         "click",
         submitOrder
@@ -2273,7 +2446,9 @@ document
 
 
 document
-    .getElementById("waiterButton")
+    .getElementById(
+        "waiterButton"
+    )
     .addEventListener(
         "click",
         callWaiter
@@ -2284,7 +2459,10 @@ cartModal.addEventListener(
     "click",
     event => {
 
-        if(event.target === cartModal){
+        if(
+            event.target ===
+            cartModal
+        ){
 
             closeCart();
 
@@ -2329,11 +2507,15 @@ async function startApp(){
 
             <div class="error-box">
 
-                <strong>Menü yüklenemedi.</strong>
+                <strong>
+                    Menü yüklenemedi.
+                </strong>
 
                 <br><br>
 
-                ${escapeHtml(error.message)}
+                ${escapeHtml(
+                    error.message
+                )}
 
                 <br>
 
@@ -2351,7 +2533,9 @@ async function startApp(){
 
 
         document
-            .getElementById("retryButton")
+            .getElementById(
+                "retryButton"
+            )
             .addEventListener(
                 "click",
                 () => {
@@ -2372,3 +2556,4 @@ startApp();
 
 </body>
 </html>
+```
