@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -115,6 +114,36 @@ button{
     box-shadow:0 0 10px rgba(214,179,106,.8);
 }
 
+/* SESSION */
+
+.session-status{
+    display:none;
+    align-items:center;
+    justify-content:center;
+    gap:7px;
+    margin:10px auto 0;
+    color:var(--muted);
+    font-size:10px;
+}
+
+.session-status.active{
+    display:flex;
+}
+
+.session-time{
+    color:var(--gold-light);
+    font-weight:800;
+    font-variant-numeric:tabular-nums;
+}
+
+.session-status.expired{
+    color:#dca1a1;
+}
+
+.session-status.expired .session-time{
+    color:#d85c5c;
+}
+
 /* QUICK ACTION */
 
 .quick-area{
@@ -139,6 +168,11 @@ button{
 
 .quick-button:active{
     transform:scale(.98);
+}
+
+.quick-button:disabled{
+    opacity:.45;
+    cursor:not-allowed;
 }
 
 .quick-icon{
@@ -198,6 +232,11 @@ button{
     border-color:var(--gold);
     color:#111;
     font-weight:700;
+}
+
+.category-btn:disabled{
+    opacity:.4;
+    cursor:not-allowed;
 }
 
 /* PRODUCTS */
@@ -302,6 +341,11 @@ button{
     transform:scale(.92);
 }
 
+.add-button:disabled{
+    opacity:.35;
+    cursor:not-allowed;
+}
+
 .quantity-control{
     display:flex;
     align-items:center;
@@ -321,6 +365,11 @@ button{
     color:#eee;
     cursor:pointer;
     font-size:18px;
+}
+
+.qty-button:disabled{
+    opacity:.35;
+    cursor:not-allowed;
 }
 
 .qty-number{
@@ -358,6 +407,53 @@ button{
     cursor:pointer;
 }
 
+/* SESSION LOCK */
+
+.session-lock{
+    position:fixed;
+    inset:0;
+    z-index:300;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:25px;
+    background:rgba(0,0,0,.82);
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+}
+
+.session-lock.show{
+    display:flex;
+}
+
+.session-lock-box{
+    width:min(430px,100%);
+    text-align:center;
+    padding:28px 22px;
+    border:1px solid rgba(214,179,106,.25);
+    border-radius:22px;
+    background:#111;
+    box-shadow:0 20px 70px rgba(0,0,0,.65);
+}
+
+.session-lock-title{
+    color:var(--gold-light);
+    font-size:19px;
+    font-weight:900;
+    margin-bottom:10px;
+}
+
+.session-lock-text{
+    color:#aaa;
+    font-size:12px;
+    line-height:1.6;
+}
+
+.session-lock-icon{
+    font-size:32px;
+    margin-bottom:14px;
+}
+
 /* CART BAR */
 
 .cart-bar{
@@ -389,6 +485,11 @@ button{
     align-items:center;
     justify-content:space-between;
     font-weight:800;
+}
+
+.cart-open:disabled{
+    opacity:.45;
+    cursor:not-allowed;
 }
 
 .cart-summary{
@@ -631,7 +732,7 @@ button{
 
 .toast{
     position:fixed;
-    z-index:200;
+    z-index:400;
     left:50%;
     bottom:92px;
     transform:translate(-50%,20px);
@@ -698,6 +799,19 @@ button{
             <span class="table-dot"></span>
             <span id="tableText">
                 Masa bağlantısı kuruluyor...
+            </span>
+        </div>
+
+        <div
+            class="session-status"
+            id="sessionStatus"
+        >
+            <span>Oturum</span>
+            <span
+                class="session-time"
+                id="sessionTime"
+            >
+                05:00
             </span>
         </div>
 
@@ -772,6 +886,7 @@ button{
 
 </div>
 
+
 <div
     class="cart-bar"
     id="cartBar"
@@ -783,6 +898,7 @@ button{
     >
 
         <span class="cart-summary">
+
             <span
                 class="cart-count"
                 id="cartCount"
@@ -793,6 +909,7 @@ button{
             <span>
                 Sepeti Gör
             </span>
+
         </span>
 
         <span id="cartBarTotal">
@@ -801,6 +918,7 @@ button{
 
     </button>
 </div>
+
 
 <div
     class="modal"
@@ -880,6 +998,7 @@ button{
             id="orderNote"
             class="note-input"
             placeholder="Özel bir isteğin varsa yazabilirsin..."
+            maxlength="500"
         ></textarea>
 
         <button
@@ -894,10 +1013,39 @@ button{
 
 </div>
 
+
+<div
+    class="session-lock"
+    id="sessionLock"
+>
+
+    <div class="session-lock-box">
+
+        <div class="session-lock-icon">
+            ⏱
+        </div>
+
+        <div class="session-lock-title">
+            Oturum sona erdi
+        </div>
+
+        <div class="session-lock-text">
+            Sipariş vermeye devam etmek için
+            masadaki NFC'yi tekrar okutun.
+            <br><br>
+            Sepetiniz korunuyor.
+        </div>
+
+    </div>
+
+</div>
+
+
 <div
     class="toast"
     id="toast"
 ></div>
+
 
 <script>
 
@@ -909,7 +1057,7 @@ const SUPABASE_URL =
     "https://qkevbwcwsbgftvgxgasy.supabase.co";
 
 const SUPABASE_ANON_KEY =
-    "sb_publishable_l39-lwrk--GgVkKDFEoPIA_1pmKKPTu";
+    "sb_publishable_l39-lwrk--GgVkKDFuEoPIA_1pmKKPTu";
 
 
 /* =========================================================
@@ -942,6 +1090,19 @@ let cart = {};
 let paymentMethod = "Nakit";
 
 let orderLocked = false;
+
+
+/* =========================================================
+   SESSION STATE
+========================================================= */
+
+let sessionId = null;
+
+let sessionExpiresAt = null;
+
+let sessionTimer = null;
+
+let sessionExpired = false;
 
 
 /* =========================================================
@@ -1003,9 +1164,29 @@ const submitOrderButton =
         "submitOrderButton"
     );
 
+const waiterButton =
+    document.getElementById(
+        "waiterButton"
+    );
+
 const toastEl =
     document.getElementById(
         "toast"
+    );
+
+const sessionStatusEl =
+    document.getElementById(
+        "sessionStatus"
+    );
+
+const sessionTimeEl =
+    document.getElementById(
+        "sessionTime"
+    );
+
+const sessionLockEl =
+    document.getElementById(
+        "sessionLock"
     );
 
 
@@ -1146,44 +1327,268 @@ async function supabaseFetch(
 
 
 /* =========================================================
-   LOAD TABLE
+   SESSION CHECK
 ========================================================= */
 
-async function loadTable(){
+function isSessionValid(){
+
+    if(
+        !sessionId ||
+        !sessionExpiresAt ||
+        sessionExpired
+    ){
+
+        return false;
+
+    }
+
+
+    return (
+        Date.now() <
+        new Date(
+            sessionExpiresAt
+        ).getTime()
+    );
+
+}
+
+
+/* =========================================================
+   SESSION LOCK
+========================================================= */
+
+function expireSession(){
+
+    if(sessionExpired){
+
+        return;
+
+    }
+
+
+    sessionExpired =
+        true;
+
+
+    clearInterval(
+        sessionTimer
+    );
+
+
+    sessionTimeEl.textContent =
+        "00:00";
+
+
+    sessionStatusEl.classList.remove(
+        "active"
+    );
+
+    sessionStatusEl.classList.add(
+        "expired"
+    );
+
+
+    sessionLockEl.classList.add(
+        "show"
+    );
+
+
+    waiterButton.disabled =
+        true;
+
+
+    submitOrderButton.disabled =
+        true;
+
+
+    document
+        .querySelectorAll(
+            ".add-button, .qty-button, .category-btn"
+        )
+        .forEach(
+            button => {
+
+                button.disabled =
+                    true;
+
+            }
+        );
+
+
+    showToast(
+        "Oturum sona erdi. NFC'yi tekrar okutun."
+    );
+
+}
+
+
+function updateSessionTimer(){
+
+    if(!sessionExpiresAt){
+
+        return;
+
+    }
+
+
+    const remaining =
+        new Date(
+            sessionExpiresAt
+        ).getTime() -
+        Date.now();
+
+
+    if(remaining <= 0){
+
+        expireSession();
+
+        return;
+
+    }
+
+
+    const totalSeconds =
+        Math.ceil(
+            remaining / 1000
+        );
+
+
+    const minutes =
+        Math.floor(
+            totalSeconds / 60
+        );
+
+    const seconds =
+        totalSeconds % 60;
+
+
+    sessionTimeEl.textContent =
+        String(minutes).padStart(2,"0") +
+        ":" +
+        String(seconds).padStart(2,"0");
+
+}
+
+
+function startSessionTimer(){
+
+    clearInterval(
+        sessionTimer
+    );
+
+
+    sessionStatusEl.classList.add(
+        "active"
+    );
+
+
+    updateSessionTimer();
+
+
+    sessionTimer =
+        setInterval(
+            updateSessionTimer,
+            1000
+        );
+
+}
+
+
+/* =========================================================
+   START NFC SESSION
+========================================================= */
+
+async function startTableSession(){
 
     if(!token){
 
         throw new Error(
-            "Masa bağlantısı bulunamadı. QR/NFC bağlantısı geçersiz."
+            "NFC bağlantısı bulunamadı. NFC bağlantısı geçersiz."
         );
 
     }
 
 
-    const data =
+    const result =
         await supabaseFetch(
-            `/rest/v1/tables?token=eq.${encodeURIComponent(token)}&active=eq.true&select=id,table_number,token`
+            "/rest/v1/rpc/start_table_session",
+            {
+                method:"POST",
+
+                headers:{
+                    "Prefer":
+                        "return=representation"
+                },
+
+                body:JSON.stringify({
+                    p_nfc_token:
+                        token
+                })
+
+            }
         );
 
 
+    /*
+     * SECURITY:
+     * Backend NFC tokenı doğrular.
+     * Masa ID'si frontend tarafından
+     * belirlenmez.
+     */
+
     if(
-        !Array.isArray(data) ||
-        data.length === 0
+        !result ||
+        result.success !== true ||
+        !result.session_id
     ){
 
         throw new Error(
-            "Masa bulunamadı veya masa pasif durumda."
+            "NFC oturumu başlatılamadı."
         );
 
     }
 
 
-    table =
-        data[0];
+    sessionId =
+        result.session_id;
+
+
+    sessionExpiresAt =
+        result.expires_at;
+
+
+    table = {
+
+        id:
+            Number(
+                result.table_id
+            ),
+
+        table_number:
+            result.table_id
+
+    };
 
 
     tableText.textContent =
         `Masa ${table.table_number}`;
+
+
+    sessionExpired =
+        false;
+
+
+    sessionStatusEl.classList.remove(
+        "expired"
+    );
+
+
+    sessionLockEl.classList.remove(
+        "show"
+    );
+
+
+    startSessionTimer();
 
 }
 
@@ -1286,9 +1691,22 @@ function renderCategories(){
                 category.name;
 
 
+            button.disabled =
+                sessionExpired;
+
+
             button.addEventListener(
                 "click",
                 () => {
+
+                    if(!isSessionValid()){
+
+                        expireSession();
+
+                        return;
+
+                    }
+
 
                     activeCategory =
                         String(
@@ -1569,10 +1987,22 @@ function renderProducts(){
                 minus.textContent =
                     "−";
 
+                minus.disabled =
+                    sessionExpired;
+
 
                 minus.addEventListener(
                     "click",
                     () => {
+
+                        if(!isSessionValid()){
+
+                            expireSession();
+
+                            return;
+
+                        }
+
 
                         changeQuantity(
                             product.id,
@@ -1609,10 +2039,22 @@ function renderProducts(){
                 plus.textContent =
                     "+";
 
+                plus.disabled =
+                    sessionExpired;
+
 
                 plus.addEventListener(
                     "click",
                     () => {
+
+                        if(!isSessionValid()){
+
+                            expireSession();
+
+                            return;
+
+                        }
+
 
                         changeQuantity(
                             product.id,
@@ -1655,10 +2097,22 @@ function renderProducts(){
                 add.textContent =
                     "+";
 
+                add.disabled =
+                    sessionExpired;
+
 
                 add.addEventListener(
                     "click",
                     () => {
+
+                        if(!isSessionValid()){
+
+                            expireSession();
+
+                            return;
+
+                        }
+
 
                         changeQuantity(
                             product.id,
@@ -1707,6 +2161,15 @@ function changeQuantity(
     productId,
     amount
 ){
+
+    if(!isSessionValid()){
+
+        expireSession();
+
+        return;
+
+    }
+
 
     const key =
         String(productId);
@@ -1861,6 +2324,14 @@ function renderCartBar(){
             total
         );
 
+
+    document
+        .getElementById(
+            "openCartButton"
+        )
+        .disabled =
+        false;
+
 }
 
 
@@ -1869,6 +2340,15 @@ function renderCartBar(){
 ========================================================= */
 
 function openCart(){
+
+    if(!isSessionValid()){
+
+        expireSession();
+
+        return;
+
+    }
+
 
     renderCart();
 
@@ -1994,10 +2474,22 @@ function renderCart(){
             minus.textContent =
                 "−";
 
+            minus.disabled =
+                sessionExpired;
+
 
             minus.addEventListener(
                 "click",
                 () => {
+
+                    if(!isSessionValid()){
+
+                        expireSession();
+
+                        return;
+
+                    }
+
 
                     changeQuantity(
                         item.product_id,
@@ -2036,10 +2528,22 @@ function renderCart(){
             plus.textContent =
                 "+";
 
+            plus.disabled =
+                sessionExpired;
+
 
             plus.addEventListener(
                 "click",
                 () => {
+
+                    if(!isSessionValid()){
+
+                        expireSession();
+
+                        return;
+
+                    }
+
 
                     changeQuantity(
                         item.product_id,
@@ -2105,6 +2609,15 @@ document
                 "click",
                 () => {
 
+                    if(!isSessionValid()){
+
+                        expireSession();
+
+                        return;
+
+                    }
+
+
                     paymentMethod =
                         button.dataset.payment;
 
@@ -2136,13 +2649,21 @@ document
 
 
 /* =========================================================
-   SEND ORDER
-   RPC / TRANSACTIONAL VERSION
+   SEND SECURE ORDER
 ========================================================= */
 
 async function submitOrder(){
 
     if(orderLocked){
+
+        return;
+
+    }
+
+
+    if(!isSessionValid()){
+
+        expireSession();
 
         return;
 
@@ -2164,10 +2685,10 @@ async function submitOrder(){
     }
 
 
-    if(!table){
+    if(!sessionId){
 
         showToast(
-            "Masa bağlantısı bulunamadı."
+            "Oturum bulunamadı."
         );
 
         return;
@@ -2193,12 +2714,6 @@ async function submitOrder(){
             orderNoteEl.value.trim();
 
 
-        /*
-         * Sadece ürün ID ve adet gönderiyoruz.
-         * Fiyatı Supabase RPC kendisi
-         * products tablosundan alıyor.
-         */
-
         const rpcItems =
             items.map(
                 item => ({
@@ -2217,9 +2732,29 @@ async function submitOrder(){
             );
 
 
+        /*
+         * GÜVENLİ SİPARİŞ:
+         *
+         * Masa ID'si gönderilmiyor.
+         * Fiyat gönderilmiyor.
+         * Toplam gönderilmiyor.
+         *
+         * Backend:
+         * session → venue → masa
+         * ürün → fiyat
+         * toplam
+         * çalışma saati
+         * idempotency
+         * kontrollerini yapıyor.
+         */
+
+        const idempotencyKey =
+            crypto.randomUUID();
+
+
         const result =
             await supabaseFetch(
-                "/rest/v1/rpc/create_order",
+                "/rest/v1/rpc/create_order_secure",
                 {
                     method:"POST",
 
@@ -2230,10 +2765,8 @@ async function submitOrder(){
 
                     body:JSON.stringify({
 
-                        p_table_id:
-                            Number(
-                                table.id
-                            ),
+                        p_session_id:
+                            sessionId,
 
                         p_payment_method:
                             paymentMethod,
@@ -2242,7 +2775,10 @@ async function submitOrder(){
                             note || null,
 
                         p_items:
-                            rpcItems
+                            rpcItems,
+
+                        p_idempotency_key:
+                            idempotencyKey
 
                     })
                 }
@@ -2267,8 +2803,6 @@ async function submitOrder(){
             result
         );
 
-
-        /* SUCCESS */
 
         cart = {};
 
@@ -2295,10 +2829,27 @@ async function submitOrder(){
         );
 
 
-        showToast(
-            "Sipariş gönderilemedi: " +
-            error.message
-        );
+        if(
+            error.message &&
+            (
+                error.message.includes(
+                    "Geçersiz veya süresi dolmuş oturum"
+                ) ||
+                error.message.includes(
+                    "Oturum"
+                )
+            )
+        ){
+
+            expireSession();
+
+        }else{
+
+            showToast(
+                "Sipariş gönderilemedi."
+            );
+
+        }
 
 
     }finally{
@@ -2307,8 +2858,12 @@ async function submitOrder(){
             false;
 
 
-        submitOrderButton.disabled =
-            false;
+        if(!sessionExpired){
+
+            submitOrderButton.disabled =
+                false;
+
+        }
 
 
         submitOrderButton.textContent =
@@ -2320,26 +2875,29 @@ async function submitOrder(){
 
 
 /* =========================================================
-   WAITER
+   SECURE WAITER
 ========================================================= */
 
 async function callWaiter(){
 
-    if(!table){
+    if(!isSessionValid()){
 
-        showToast(
-            "Masa bağlantısı bulunamadı."
-        );
+        expireSession();
 
         return;
 
     }
 
 
-    const waiterButton =
-        document.getElementById(
-            "waiterButton"
+    if(!sessionId){
+
+        showToast(
+            "Oturum bulunamadı."
         );
+
+        return;
+
+    }
 
 
     waiterButton.disabled =
@@ -2352,30 +2910,62 @@ async function callWaiter(){
 
     try{
 
-        await supabaseFetch(
-            "/rest/v1/service_requests",
-            {
-                method:"POST",
-
-                body:JSON.stringify({
-
-                    table_id:
-                        table.id,
-
-                    request_type:
-                        "waiter",
-
-                    status:
-                        "pending"
-
-                })
-            }
-        );
+        const idempotencyKey =
+            crypto.randomUUID();
 
 
-        showToast(
-            "Garson çağrınız iletildi."
-        );
+        const result =
+            await supabaseFetch(
+                "/rest/v1/rpc/call_waiter",
+                {
+                    method:"POST",
+
+                    headers:{
+                        "Prefer":
+                            "return=representation"
+                    },
+
+                    body:JSON.stringify({
+
+                        p_session_id:
+                            sessionId,
+
+                        p_idempotency_key:
+                            idempotencyKey
+
+                    })
+                }
+            );
+
+
+        if(
+            !result ||
+            result.success !== true
+        ){
+
+            throw new Error(
+                "Garson çağrısı onaylanamadı."
+            );
+
+        }
+
+
+        if(
+            result.already_pending === true ||
+            result.duplicate === true
+        ){
+
+            showToast(
+                "Garson çağrınız zaten iletildi."
+            );
+
+        }else{
+
+            showToast(
+                "Garson çağrınız iletildi."
+            );
+
+        }
 
 
     }catch(error){
@@ -2386,9 +2976,22 @@ async function callWaiter(){
         );
 
 
-        showToast(
-            "Garson çağrısı gönderilemedi."
-        );
+        if(
+            error.message &&
+            error.message.includes(
+                "oturum"
+            )
+        ){
+
+            expireSession();
+
+        }else{
+
+            showToast(
+                "Garson çağrısı gönderilemedi."
+            );
+
+        }
 
 
     }finally{
@@ -2396,11 +2999,15 @@ async function callWaiter(){
         setTimeout(
             () => {
 
-                waiterButton.disabled =
-                    false;
+                if(!sessionExpired){
 
-                waiterButton.style.opacity =
-                    "";
+                    waiterButton.disabled =
+                        false;
+
+                    waiterButton.style.opacity =
+                        "";
+
+                }
 
             },
             3000
@@ -2481,10 +3088,23 @@ async function startApp(){
     try{
 
         tableText.textContent =
-            "Masa bağlantısı kuruluyor...";
+            "NFC bağlantısı kuruluyor...";
 
 
-        await loadTable();
+        /*
+         * 1. NFC TOKEN
+         * 2. BACKEND SESSION
+         * 3. 5 DAKİKA
+         */
+
+        await startTableSession();
+
+
+        /*
+         * Session oluştuktan sonra
+         * mevcut menü sistemini aynen
+         * yüklemeye devam ediyoruz.
+         */
 
         await loadCategories();
 
@@ -2500,7 +3120,7 @@ async function startApp(){
 
 
         tableText.textContent =
-            "Bağlantı hatası";
+            "NFC bağlantısı kurulamadı";
 
 
         productsEl.innerHTML = `
@@ -2556,4 +3176,3 @@ startApp();
 
 </body>
 </html>
-```
