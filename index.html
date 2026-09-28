@@ -2365,6 +2365,67 @@ async function loadProducts(){
 
 
 /* =========================================================
+   SECURE MENU LOAD
+========================================================= */
+
+async function loadMenuSecure(){
+
+    if(!sessionId){
+
+        throw new Error(
+            "Geçerli NFC oturumu bulunamadı."
+        );
+
+    }
+
+
+    const data =
+        await supabaseFetch(
+            "/rest/v1/rpc/get_menu_secure",
+            {
+                method:"POST",
+
+                headers:{
+                    "Prefer":"return=representation"
+                },
+
+                body:JSON.stringify({
+                    p_session_id:sessionId
+                })
+            }
+        );
+
+
+    categories =
+        Array.isArray(data?.categories)
+            ? data.categories
+            : [];
+
+
+    products =
+        Array.isArray(data?.products)
+            ? data.products
+            : [];
+
+
+    if(categories.length){
+
+        activeCategory =
+            String(
+                categories[0].id
+            );
+
+    }
+
+
+    renderCategories();
+
+    renderProducts();
+
+}
+
+
+/* =========================================================
    CATEGORY RENDER
 ========================================================= */
 
@@ -3850,9 +3911,7 @@ async function startApp(){
                 
                 await loadAdvertisements();
 
-await loadCategories();
 
-await loadProducts();
 
                 expireSession();
 
@@ -3880,9 +3939,7 @@ await loadProducts();
 
         await loadAdvertisements();
 
-await loadCategories();
-
-await loadProducts();
+await loadMenuSecure();
 
 
     }catch(error){
