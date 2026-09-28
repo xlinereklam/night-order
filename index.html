@@ -1074,7 +1074,8 @@ const token =
 
 const SESSION_STORAGE_KEY =
     "night_order_active_session";
-
+const CART_STORAGE_KEY =
+    "night_order_cart";
 
 /* =========================================================
    STATE
@@ -1196,7 +1197,83 @@ const sessionLockEl =
 /* =========================================================
    HELPERS
 ========================================================= */
+function saveCart(){
 
+    try{
+
+        sessionStorage.setItem(
+            CART_STORAGE_KEY,
+            JSON.stringify(cart)
+        );
+
+    }catch(error){
+
+        console.error(
+            "SEPET KAYDETME HATASI:",
+            error
+        );
+
+    }
+
+}
+
+
+function restoreCart(){
+
+    const stored =
+        sessionStorage.getItem(
+            CART_STORAGE_KEY
+        );
+
+
+    if(!stored){
+
+        cart = {};
+
+        return;
+
+    }
+
+
+    try{
+
+        const data =
+            JSON.parse(stored);
+
+
+        if(
+            !data ||
+            typeof data !== "object" ||
+            Array.isArray(data)
+        ){
+
+            cart = {};
+
+            return;
+
+        }
+
+
+        cart =
+            data;
+
+
+    }catch(error){
+
+        console.error(
+            "SEPET GERİ YÜKLEME HATASI:",
+            error
+        );
+
+        cart = {};
+
+        sessionStorage.removeItem(
+            CART_STORAGE_KEY
+        );
+
+    }
+
+}
 function formatPrice(value){
 
     return Number(value || 0)
@@ -2398,9 +2475,11 @@ function changeQuantity(
     }
 
 
-    renderProducts();
+    saveCart();
 
-    renderCartBar();
+renderProducts();
+
+renderCartBar();
 
 }
 
@@ -2966,8 +3045,12 @@ async function submitOrder(){
 
         cart = {};
 
-        orderNoteEl.value =
-            "";
+sessionStorage.removeItem(
+    CART_STORAGE_KEY
+);
+
+orderNoteEl.value =
+    "";
 
         renderProducts();
 
@@ -3247,9 +3330,10 @@ async function startApp(){
 
     try{
 
+        restoreCart();
+
         tableText.textContent =
             "NFC bağlantısı kuruluyor...";
-
 
         /*
          * URL'DE NFC TOKENI VARSA:
