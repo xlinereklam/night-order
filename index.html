@@ -143,7 +143,84 @@ button{
 .session-status.expired .session-time{
     color:#d85c5c;
 }
+/* ADVERTISING */
 
+.ad-area{
+    margin:4px 0 18px;
+    display:none;
+}
+
+.ad-slider{
+    position:relative;
+    width:100%;
+    overflow:hidden;
+    border-radius:18px;
+    border:1px solid rgba(214,179,106,.16);
+    background:#111;
+    aspect-ratio:16 / 6;
+}
+
+.ad-slide{
+    position:absolute;
+    inset:0;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .45s ease;
+}
+
+.ad-slide.active{
+    opacity:1;
+    pointer-events:auto;
+}
+
+.ad-slide img{
+    width:100%;
+    height:100%;
+    display:block;
+    object-fit:cover;
+}
+
+.ad-slide.clickable{
+    cursor:pointer;
+}
+
+.ad-label{
+    position:absolute;
+    top:8px;
+    right:8px;
+    z-index:5;
+    padding:4px 7px;
+    border-radius:7px;
+    background:rgba(0,0,0,.58);
+    color:#ccc;
+    font-size:8px;
+    letter-spacing:.8px;
+    text-transform:uppercase;
+    backdrop-filter:blur(5px);
+}
+
+.ad-dots{
+    position:absolute;
+    z-index:6;
+    left:50%;
+    bottom:8px;
+    transform:translateX(-50%);
+    display:flex;
+    gap:5px;
+}
+
+.ad-dot{
+    width:6px;
+    height:6px;
+    padding:0;
+    border:0;
+    border-radius:50%;
+    background:rgba(255,255,255,.35);
+}
+
+.ad-dot.active{
+    background:var(--gold-light);
+}
 /* QUICK ACTION */
 
 .quick-area{
@@ -816,7 +893,17 @@ button{
         </div>
 
     </header>
-
+    
+<section
+    class="ad-area"
+    id="adArea"
+>
+    <div
+        class="ad-slider"
+        id="adSlider"
+    ></div>
+</section>
+    
     <section class="quick-area">
 
         <button
@@ -1106,7 +1193,11 @@ let paymentMethod = "Nakit";
 
 let orderLocked = false;
 
+let advertisements = [];
 
+let activeAdIndex = 0;
+
+let adTimer = null;
 /* =========================================================
    SESSION STATE
 ========================================================= */
@@ -1124,7 +1215,16 @@ let notificationChannel = null;
 /* =========================================================
    ELEMENTS
 ========================================================= */
+const adArea =
+    document.getElementById(
+        "adArea"
+    );
 
+const adSlider =
+    document.getElementById(
+        "adSlider"
+    );
+    
 const tableText =
     document.getElementById(
         "tableText"
@@ -1879,6 +1979,372 @@ async function loadCategories(){
    LOAD PRODUCTS
 ========================================================= */
 
+    /* =========================================================
+   ADVERTISEMENTS
+========================================================= */
+
+async function loadAdvertisements(){
+
+    if(!sessionId){
+
+        advertisements = [];
+
+        renderAdvertisements();
+
+        return;
+
+    }
+
+
+    try{
+
+        const data =
+            await supabaseFetch(
+                "/rest/v1/rpc/get_active_ads",
+                {
+                    method:"POST",
+
+                    headers:{
+                        "Prefer":
+                            "return=representation"
+                    },
+
+                    body:JSON.stringify({
+                        p_session_id:
+                            sessionId
+                    })
+                }
+            );
+
+
+        advertisements =
+            Array.isArray(data)
+                ? data.filter(
+                    ad =>
+                        ad.ad_type ===
+                        "slider"
+                )
+                : [];
+
+
+        activeAdIndex = 0;
+
+        renderAdvertisements();
+
+
+    }catch(error){
+
+        console.error(
+            "REKLAM YÜKLEME HATASI:",
+            error
+        );
+
+
+        advertisements = [];
+
+        renderAdvertisements();
+
+    }
+
+}
+
+
+function renderAdvertisements(){
+
+    clearInterval(
+        adTimer
+    );
+
+    adTimer = null;
+
+
+    adSlider.innerHTML =
+        "";
+
+
+    if(
+        !advertisements.length
+    ){
+
+        adArea.style.display =
+            "none";
+
+        return;
+
+    }
+
+
+    adArea.style.display =
+        "block";
+
+
+    advertisements.forEach(
+        (ad,index) => {
+
+            const slide =
+                document.createElement(
+                    "div"
+                );
+
+
+            slide.className =
+                "ad-slide";
+
+
+            if(index === 0){
+
+                slide.classList.add(
+                    "active"
+                );
+
+            }
+
+
+            const image =
+                document.createElement(
+                    "img"
+                );
+
+
+            image.src =
+                ad.image_url;
+
+            image.alt =
+                ad.title ||
+                ad.advertiser ||
+                "Reklam";
+
+            image.loading =
+                "lazy";
+
+
+            image.onerror =
+                () => {
+
+                    slide.style.display =
+                        "none";
+
+                };
+
+
+            slide.appendChild(
+                image
+            );
+
+
+            if(ad.target_url){
+
+                slide.classList.add(
+                    "clickable"
+                );
+
+
+                slide.addEventListener(
+                    "click",
+                    () => {
+
+                        openAdvertisement(
+                            ad.target_url
+                        );
+
+                    }
+                );
+
+            }
+
+
+            const label =
+                document.createElement(
+                    "div"
+                );
+
+            label.className =
+                "ad-label";
+
+            label.textContent =
+                "Reklam";
+
+
+            slide.appendChild(
+                label
+            );
+
+
+            adSlider.appendChild(
+                slide
+            );
+
+        }
+    );
+
+
+    if(
+        advertisements.length > 1
+    ){
+
+        const dots =
+            document.createElement(
+                "div"
+            );
+
+        dots.className =
+            "ad-dots";
+
+
+        advertisements.forEach(
+            (_,index) => {
+
+                const dot =
+                    document.createElement(
+                        "button"
+                    );
+
+                dot.type =
+                    "button";
+
+                dot.className =
+                    "ad-dot";
+
+
+                if(index === 0){
+
+                    dot.classList.add(
+                        "active"
+                    );
+
+                }
+
+
+                dot.addEventListener(
+                    "click",
+                    event => {
+
+                        event.stopPropagation();
+
+                        showAdvertisement(
+                            index
+                        );
+
+                    }
+                );
+
+
+                dots.appendChild(
+                    dot
+                );
+
+            }
+        );
+
+
+        adSlider.appendChild(
+            dots
+        );
+
+
+        adTimer =
+            setInterval(
+                () => {
+
+                    const next =
+                        (
+                            activeAdIndex + 1
+                        ) %
+                        advertisements.length;
+
+
+                    showAdvertisement(
+                        next
+                    );
+
+                },
+                4500
+            );
+
+    }
+
+}
+
+
+function showAdvertisement(index){
+
+    activeAdIndex =
+        index;
+
+
+    adSlider
+        .querySelectorAll(
+            ".ad-slide"
+        )
+        .forEach(
+            (slide,i) => {
+
+                slide.classList.toggle(
+                    "active",
+                    i === index
+                );
+
+            }
+        );
+
+
+    adSlider
+        .querySelectorAll(
+            ".ad-dot"
+        )
+        .forEach(
+            (dot,i) => {
+
+                dot.classList.toggle(
+                    "active",
+                    i === index
+                );
+
+            }
+        );
+
+}
+
+
+function openAdvertisement(url){
+
+    try{
+
+        const parsed =
+            new URL(
+                url,
+                window.location.origin
+            );
+
+
+        if(
+            parsed.protocol !== "https:" &&
+            parsed.protocol !== "http:"
+        ){
+
+            return;
+
+        }
+
+
+        window.open(
+            parsed.href,
+            "_blank",
+            "noopener,noreferrer"
+        );
+
+
+    }catch(error){
+
+        console.error(
+            "REKLAM URL HATASI:",
+            error
+        );
+
+    }
+
+}
+    
 async function loadProducts(){
 
     const data =
@@ -3382,9 +3848,11 @@ async function startApp(){
 
                 startCustomerNotifications();
                 
-                await loadCategories();
+                await loadAdvertisements();
 
-                await loadProducts();
+await loadCategories();
+
+await loadProducts();
 
                 expireSession();
 
