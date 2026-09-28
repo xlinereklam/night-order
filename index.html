@@ -1047,6 +1047,8 @@ button{
 ></div>
 
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
 
 /* =========================================================
@@ -1058,7 +1060,16 @@ const SUPABASE_URL =
 
 const SUPABASE_ANON_KEY =
     "sb_publishable_l39-lwrk--GgVkKDFEoPIA_1pmKKPTu";
+const {
+    createClient
+} = window.supabase;
 
+
+const db =
+    createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY
+    );
 
 /* =========================================================
    URL TOKEN
@@ -1108,7 +1119,8 @@ let sessionTimer = null;
 
 let sessionExpired = false;
 
-
+let notificationChannel = null;
+    
 /* =========================================================
    ELEMENTS
 ========================================================= */
@@ -3368,6 +3380,8 @@ async function startApp(){
 
             if(restored === "expired"){
 
+                startCustomerNotifications();
+                
                 await loadCategories();
 
                 await loadProducts();
