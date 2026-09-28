@@ -1072,6 +1072,9 @@ const params =
 const token =
     params.get("t");
 
+const SESSION_STORAGE_KEY =
+    "night_order_active_session";
+
 
 /* =========================================================
    STATE
@@ -1503,7 +1506,7 @@ async function startTableSession(){
     if(!token){
 
         throw new Error(
-            "NFC bağlantısı bulunamadı. NFC bağlantısı geçersiz."
+            "NFC bağlantısı bulunamadı. Masadaki NFC'yi okutun."
         );
 
     }
@@ -1528,13 +1531,6 @@ async function startTableSession(){
             }
         );
 
-
-    /*
-     * SECURITY:
-     * Backend NFC tokenı doğrular.
-     * Masa ID'si frontend tarafından
-     * belirlenmez.
-     */
 
     if(
         !result ||
@@ -1570,6 +1566,50 @@ async function startTableSession(){
     };
 
 
+    /*
+     * AKTİF SESSION'I BU SEKMEDE SAKLA
+     *
+     * F5 yapılırsa yeni session oluşturmak yerine
+     * mevcut session kullanılacak.
+     */
+
+    sessionStorage.setItem(
+        SESSION_STORAGE_KEY,
+        JSON.stringify({
+
+            session_id:
+                sessionId,
+
+            expires_at:
+                sessionExpiresAt,
+
+            table_id:
+                table.id
+
+        })
+    );
+
+
+    /*
+     * NFC TOKENINI ADRES ÇUBUĞUNDAN SİL
+     *
+     * NFC:
+     * /?t=TOKEN
+     *
+     * başarılı session sonrası:
+     * /
+     *
+     * Böylece F5 aynı NFC tokenını tekrar
+     * backend'e gönderemez.
+     */
+
+    window.history.replaceState(
+        {},
+        document.title,
+        window.location.pathname
+    );
+
+
     tableText.textContent =
         `Masa ${table.table_number}`;
 
@@ -1591,7 +1631,127 @@ async function startTableSession(){
     startSessionTimer();
 
 }
+function restoreStoredSession(){
 
+    const stored =
+        sessionStorage.getItem(
+            SESSION_STORAGE_KEY
+        );
+
+
+    if(!stored){
+
+        return false;
+
+    }
+
+
+    try{
+
+        const data =
+            JSON.parse(
+                stored
+            );
+
+
+        if(
+            !data.session_id ||
+            !data.expires_at ||
+            !data.table_id
+        ){
+
+            sessionStorage.removeItem(
+                SESSION_STORAGE_KEY
+            );
+
+            return false;
+
+        }
+
+
+        sessionId =
+            data.session_id;
+
+
+        sessionExpiresAt =
+            data.expires_at;
+
+
+        table = {
+
+            id:
+                Number(
+                    data.table_id
+                ),
+
+            table_number:
+                data.table_id
+
+        };
+
+
+        tableText.textContent =
+            `Masa ${table.table_number}`;
+
+
+        /*
+         * Session süresi zaten dolmuşsa
+         * ASLA yeni session oluşturma.
+         */
+
+        if(
+            Date.now() >=
+            new Date(
+                sessionExpiresAt
+            ).getTime()
+        ){
+
+            sessionExpired =
+                true;
+
+            return "expired";
+
+        }
+
+
+        sessionExpired =
+            false;
+
+
+        sessionStatusEl.classList.remove(
+            "expired"
+        );
+
+
+        sessionLockEl.classList.remove(
+            "show"
+        );
+
+
+        startSessionTimer();
+
+
+        return true;
+
+
+    }catch(error){
+
+        console.error(
+            "SESSION RESTORE HATASI:",
+            error
+        );
+
+
+        sessionStorage.removeItem(
+            SESSION_STORAGE_KEY
+        );
+
+
+        return false;
+
+    }
+
+}
 
 /* =========================================================
    LOAD CATEGORIES
@@ -3092,19 +3252,65 @@ async function startApp(){
 
 
         /*
-         * 1. NFC TOKEN
-         * 2. BACKEND SESSION
-         * 3. 5 DAKİKA
+         * URL'DE NFC TOKENI VARSA:
+         *
+         * Bu giriş NFC URL'sinden geldi.
+         * Yeni 5 dakikalık session oluştur.
          */
 
-        await startTableSession();
+        if(token){
+
+            await startTableSession();
+
+        }else{
+
+            /*
+             * TOKEN YOKSA:
+             *
+             * F5 / normal sayfa yenileme olabilir.
+             * Yeni session oluşturmak YASAK.
+             *
+             * Önce mevcut session'ı geri yüklemeyi dene.
+             */
+
+            const restored =
+                restoreStoredSession();
 
 
-        /*
-         * Session oluştuktan sonra
-         * mevcut menü sistemini aynen
-         * yüklemeye devam ediyoruz.
-         */
+            /*
+             * Eski session bulundu ama
+             * 5 dakika dolmuş.
+             */
+
+            if(restored === "expired"){
+
+                await loadCategories();
+
+                await loadProducts();
+
+                expireSession();
+
+                return;
+
+            }
+
+
+            /*
+             * Aktif session da bulunamadı.
+             *
+             * NFC okutulmadan devam edilemez.
+             */
+
+            if(restored !== true){
+
+                throw new Error(
+                    "Sipariş vermek için masadaki NFC'yi okutun."
+                );
+
+            }
+
+        }
+
 
         await loadCategories();
 
@@ -3120,7 +3326,7 @@ async function startApp(){
 
 
         tableText.textContent =
-            "NFC bağlantısı kurulamadı";
+            "NFC okutulması gerekiyor";
 
 
         productsEl.innerHTML = `
@@ -3128,7 +3334,7 @@ async function startApp(){
             <div class="error-box">
 
                 <strong>
-                    Menü yüklenemedi.
+                    NFC bağlantısı gerekli.
                 </strong>
 
                 <br><br>
@@ -3137,33 +3343,13 @@ async function startApp(){
                     error.message
                 )}
 
-                <br>
-
-                <button
-                    type="button"
-                    class="retry-button"
-                    id="retryButton"
-                >
-                    Tekrar Dene
-                </button>
-
             </div>
 
         `;
 
 
-        document
-            .getElementById(
-                "retryButton"
-            )
-            .addEventListener(
-                "click",
-                () => {
-
-                    window.location.reload();
-
-                }
-            );
+        waiterButton.disabled =
+            true;
 
     }
 
